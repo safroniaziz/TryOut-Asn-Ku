@@ -6,6 +6,7 @@ use App\Models\Tryout;
 use App\Models\Materi;
 use App\Models\Leaderboard;
 use App\Models\User;
+use App\Services\AIRecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class DashboardController extends Controller
     /**
      * Display the user's dashboard.
      */
-    public function index()
+    public function index(AIRecommendationService $aiService)
     {
         /** @var User $user */
         $user = Auth::user();
@@ -52,6 +53,9 @@ class DashboardController extends Controller
             'current_level' => 1, // TODO: Implement level system
             'categories_tried' => $this->getUniqueCategoriesCount($user),
         ];
+
+        // Generate AI-powered personal recommendations
+        $aiRecommendations = $aiService->generatePersonalRecommendations($user);
 
         // Calculate progress data for dashboard
         $progressData = $this->calculateProgressData($user);
@@ -100,7 +104,8 @@ class DashboardController extends Controller
             'userTryouts',
             'hasPremium',
             'targetTest',
-            'tryoutPackages'
+            'tryoutPackages',
+            'aiRecommendations'
         ));
     }
 

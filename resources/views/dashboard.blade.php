@@ -98,797 +98,803 @@
                 </p>
             </div>
 
-                <!-- Epic Statistics Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20 items-stretch">
-                    <!-- Total Completed Card -->
-                    <div class="h-full group min-h-[280px]">
-                        <div class="relative h-full">
-                            <!-- Glow Effect -->
-                            <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
-
-                            <!-- Card Content -->
-                            <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full flex flex-col border border-gray-100 min-h-[280px]">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
-                                        <span class="text-white text-xl">📋</span>
-                                    </div>
-                                    <div class="flex flex-col items-end">
-                                        @if($stats['total_tryouts_completed'] >= 10)
-                                            <div class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full mb-1">
-                                                📈 Produktif
-                                            </div>
-                                        @endif
-                                        <div class="text-xs text-gray-500 font-medium">Selesai</div>
-                                    </div>
-                                </div>
-                                <div class="flex-grow flex flex-col justify-center">
-                                    <div class="text-4xl font-black text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text mb-2 tabular-nums">{{ $stats['total_tryouts_completed'] }}</div>
-                                    <div class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Tryout Selesai</div>
-
-                                    <!-- Progress Info -->
-                                    <div class="mb-3">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs text-gray-600">Progress</span>
-                                            <span class="text-xs font-bold text-blue-600">{{ $progressData['completion_rate'] }}%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min($progressData['completion_rate'], 100) }}%"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Additional Stats -->
-                                    <div class="grid grid-cols-2 gap-2 mb-3">
-                                        <div class="text-center p-2 bg-blue-50 rounded-lg">
-                                            <div class="text-lg font-bold text-blue-600">{{ $progressData['total_tryouts_available'] }}</div>
-                                            <div class="text-xs text-gray-600">Tersedia</div>
-                                        </div>
-                                        <div class="text-center p-2 bg-cyan-50 rounded-lg">
-                                            <div class="text-lg font-bold text-cyan-600">{{ $progressData['study_streak'] }}</div>
-                                            <div class="text-xs text-gray-600">Hari Streak</div>
-                                        </div>
-                                    </div>
-
-                                    @if($stats['total_tryouts_completed'] >= 10)
-                                        <div class="bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            🚀 Hebat!
-                                        </div>
-                                    @elseif($stats['total_tryouts_completed'] >= 5)
-                                        <div class="bg-gradient-to-r from-blue-400 to-indigo-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            📈 Bagus!
-                                        </div>
-                                    @else
-                                        <div class="bg-gradient-to-r from-orange-400 to-red-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            🚀 Mulai!
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- Best Score Card -->
-                    <div class="h-full group min-h-[280px]">
-                        <div class="relative h-full">
-                            <!-- Glow Effect -->
-                            <div class="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
-
-                            <!-- Card Content -->
-                            <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full flex flex-col border border-gray-100 min-h-[280px]">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
-                                        <span class="text-white text-xl">🏆</span>
-                                    </div>
-                                    <div class="flex flex-col items-end">
-                                        @if($stats['best_score'] >= 90)
-                                            <div class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full mb-1">
-                                                👑 Rekor
-                                            </div>
-                                        @endif
-                                        <div class="text-xs text-gray-500 font-medium">Terbaik</div>
-                                    </div>
-                                </div>
-                                <div class="flex-grow flex flex-col justify-center">
-                                    <div class="text-4xl font-black text-transparent bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text mb-2 tabular-nums">{{ $stats['best_score'] }}</div>
-                                    <div class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Skor Tertinggi</div>
-
-                                    <!-- Score Comparison -->
-                                    <div class="mb-3">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs text-gray-600">Rata-rata</span>
-                                            <span class="text-xs font-bold text-purple-600">{{ number_format($stats['average_score'], 1) }}</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min($stats['best_score'], 100) }}%"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Score Stats -->
-                                    <div class="grid grid-cols-2 gap-2 mb-3">
-                                        <div class="text-center p-2 bg-purple-50 rounded-lg">
-                                            <div class="text-lg font-bold text-purple-600">{{ $stats['average_score'] }}</div>
-                                            <div class="text-xs text-gray-600">Rata-rata</div>
-                                        </div>
-                                        <div class="text-center p-2 bg-pink-50 rounded-lg">
-                                            <div class="text-lg font-bold text-pink-600">{{ $stats['best_score'] - $stats['average_score'] > 0 ? '+' . ($stats['best_score'] - $stats['average_score']) : '0' }}</div>
-                                            <div class="text-xs text-gray-600">Selisih</div>
-                                        </div>
-                                    </div>
-
-                                    @if($stats['best_score'] >= 90)
-                                        <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            🏆 Sempurna!
-                                        </div>
-                                    @elseif($stats['best_score'] >= 80)
-                                        <div class="bg-gradient-to-r from-blue-400 to-indigo-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            ⭐ Sangat Baik!
-                                        </div>
-                                    @else
-                                        <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            📈 Tingkatkan!
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Global Ranking Card -->
-                    <div class="h-full group min-h-[280px]">
-                        <div class="relative h-full">
-                            <!-- Glow Effect -->
-                            <div class="absolute -inset-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
-
-                            <!-- Card Content -->
-                            <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full flex flex-col border border-gray-100 min-h-[280px]">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
-                                        <span class="text-white text-xl">🥇</span>
-                                    </div>
-                                    <div class="flex flex-col items-end">
-                                        @if($progressData['rank_position'] <= 100)
-                                            <div class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-full mb-1">
-                                                🌟 Top {{ round(($progressData['rank_position'] / $progressData['total_users']) * 100) }}%
-                                            </div>
-                                        @endif
-                                        <div class="text-xs text-gray-500 font-medium">Global</div>
-                                    </div>
-                                </div>
-                                <div class="flex-grow flex flex-col justify-center">
-                                    <div class="text-4xl font-black text-transparent bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text mb-2 tabular-nums">#{{ $progressData['rank_position'] }}</div>
-                                    <div class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Peringkat Global</div>
-
-                                    <!-- Ranking Progress -->
-                                    <div class="mb-3">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs text-gray-600">Dari {{ number_format($progressData['total_users']) }} user</span>
-                                            <span class="text-xs font-bold text-orange-600">Top {{ round(($progressData['rank_position'] / $progressData['total_users']) * 100, 1) }}%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-gradient-to-r from-orange-500 to-red-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min(100 - (($progressData['rank_position'] - 1) / $progressData['total_users']) * 100, 100) }}%"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Ranking Stats -->
-                                    <div class="grid grid-cols-2 gap-2 mb-3">
-                                        <div class="text-center p-2 bg-orange-50 rounded-lg">
-                                            <div class="text-lg font-bold text-orange-600">{{ number_format($progressData['total_users']) }}</div>
-                                            <div class="text-xs text-gray-600">Total User</div>
-                                        </div>
-                                        <div class="text-center p-2 bg-red-50 rounded-lg">
-                                            <div class="text-lg font-bold text-red-600">{{ $progressData['rank_position'] > 1 ? $progressData['rank_position'] - 1 : 0 }}</div>
-                                            <div class="text-xs text-gray-600">Di Atas</div>
-                                        </div>
-                                    </div>
-
-                                    @if($progressData['rank_position'] <= 10)
-                                        <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            🏆 Elite!
-                                        </div>
-                                    @elseif($progressData['rank_position'] <= 50)
-                                        <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            🌟 Top 50!
-                                        </div>
-                                    @elseif($progressData['rank_position'] <= 100)
-                                        <div class="bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            ✅ Bagus!
-                                        </div>
-                                    @else
-                                        <div class="bg-gradient-to-r from-indigo-400 to-blue-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            ⬆️ Naik!
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Latest Activity Card -->
-                    <div class="h-full group min-h-[280px]">
+            <!-- Epic Statistics Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20 items-stretch">
+                <!-- Total Completed Card -->
+                <div class="h-full group min-h-[280px]">
                     <div class="relative h-full">
                         <!-- Glow Effect -->
-                        <div class="absolute -inset-1 bg-gradient-to-r from-teal-500 to-green-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
 
                         <!-- Card Content -->
                         <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full flex flex-col border border-gray-100 min-h-[280px]">
                             <div class="flex items-center justify-between mb-3">
-                                <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-green-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
-                                    <span class="text-white text-xl">🕐</span>
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
+                                    <span class="text-white text-xl">📋</span>
                                 </div>
                                 <div class="flex flex-col items-end">
-                                    @if($userTryouts->count() >= 10)
-                                        <div class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-full mb-1">
-                                            📈 Aktif
+                                    @if($stats['total_tryouts_completed'] >= 10)
+                                        <div class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full mb-1">
+                                            📈 Produktif
                                         </div>
                                     @endif
-                                    <div class="text-xs text-gray-500 font-medium">Terbaru</div>
+                                    <div class="text-xs text-gray-500 font-medium">Selesai</div>
                                 </div>
                             </div>
                             <div class="flex-grow flex flex-col justify-center">
-                                @if($userTryouts->count() > 0)
-                                    @php
-                                        $latestTryout = $userTryouts->first();
-                                        $totalSoal = $latestTryout->benar + $latestTryout->salah + $latestTryout->tidak_dijawab;
-                                        $tryout = $latestTryout->tryout;
-                                    @endphp
+                                <div class="text-4xl font-black text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text mb-2 tabular-nums">{{ $stats['total_tryouts_completed'] }}</div>
+                                <div class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Tryout Selesai</div>
 
-                                    <!-- Judul Tryout -->
-                                    <div class="text-sm font-bold text-gray-800 mb-2 truncate" title="{{ $tryout->title }}">
-                                        {{ strlen($tryout->title) > 20 ? substr($tryout->title, 0, 20) . '...' : $tryout->title }}
+                                <!-- Progress Info -->
+                                <div class="mb-3">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">Progress</span>
+                                        <span class="text-xs font-bold text-blue-600">{{ $progressData['completion_rate'] }}%</span>
                                     </div>
-
-                                    <div class="text-2xl font-black text-transparent bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text mb-1 tabular-nums">{{ $latestTryout->benar }}/{{ $totalSoal }}</div>
-                                    <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">Jawaban Benar</div>
-
-                                    <!-- Tryout Info -->
-                                    <div class="mb-3">
-                                        <div class="flex items-center justify-between mb-1">
-                                            <span class="text-xs text-gray-600">Skor</span>
-                                            <span class="text-xs font-bold text-teal-600">{{ number_format($latestTryout->persentase, 1) }}%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-gradient-to-r from-teal-500 to-green-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min($latestTryout->persentase, 100) }}%"></div>
-                                        </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min($progressData['completion_rate'], 100) }}%"></div>
                                     </div>
+                                </div>
 
-                                    <!-- Tryout Details -->
-                                    <div class="grid grid-cols-2 gap-2 mb-3">
-                                        <div class="text-center p-2 bg-teal-50 rounded-lg">
-                                            <div class="text-lg font-bold text-teal-600">{{ $tryout->type }}</div>
-                                            <div class="text-xs text-gray-600">Jenis</div>
-                                        </div>
-                                        <div class="text-center p-2 bg-green-50 rounded-lg">
-                                            <div class="text-lg font-bold text-green-600">{{ $tryout->isFree() ? 'FREE' : 'PREMIUM' }}</div>
-                                            <div class="text-xs text-gray-600">Paket</div>
-                                        </div>
+                                <!-- Additional Stats -->
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="text-center p-2 bg-blue-50 rounded-lg">
+                                        <div class="text-lg font-bold text-blue-600">{{ $progressData['total_tryouts_available'] }}</div>
+                                        <div class="text-xs text-gray-600">Tersedia</div>
                                     </div>
+                                    <div class="text-center p-2 bg-cyan-50 rounded-lg">
+                                        <div class="text-lg font-bold text-cyan-600">{{ $progressData['study_streak'] }}</div>
+                                        <div class="text-xs text-gray-600">Hari Streak</div>
+                                    </div>
+                                </div>
 
-                                    @if($latestTryout->persentase >= 90)
-                                        <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            🏆 Sempurna!
-                                        </div>
-                                    @elseif($latestTryout->persentase >= 80)
-                                        <div class="bg-gradient-to-r from-blue-400 to-indigo-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            ⭐ Sangat Baik!
-                                        </div>
-                                    @elseif($latestTryout->persentase >= 60)
-                                        <div class="bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
-                                            ✅ Bagus!
+                                @if($stats['total_tryouts_completed'] >= 10)
+                                    <div class="bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        🚀 Hebat!
+                                    </div>
+                                @elseif($stats['total_tryouts_completed'] >= 5)
+                                    <div class="bg-gradient-to-r from-blue-400 to-indigo-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        📈 Bagus!
+                                    </div>
+                                @else
+                                    <div class="bg-gradient-to-r from-orange-400 to-red-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        🚀 Mulai!
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Best Score Card -->
+                <div class="h-full group min-h-[280px]">
+                    <div class="relative h-full">
+                        <!-- Glow Effect -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
+
+                        <!-- Card Content -->
+                        <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full flex flex-col border border-gray-100 min-h-[280px]">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
+                                    <span class="text-white text-xl">🏆</span>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    @if($stats['best_score'] >= 90)
+                                        <div class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full mb-1">
+                                            👑 Rekor
                                         </div>
                                     @endif
+                                    <div class="text-xs text-gray-500 font-medium">Terbaik</div>
+                                </div>
+                            </div>
+                            <div class="flex-grow flex flex-col justify-center">
+                                <div class="text-4xl font-black text-transparent bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text mb-2 tabular-nums">{{ $stats['best_score'] }}</div>
+                                <div class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Skor Tertinggi</div>
 
-                                    <!-- Tombol Lihat Riwayat -->
-                                    <div class="mt-2">
-                                        <a href="{{ route('tryouts.index') }}"
-                                           class="w-full bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all duration-200 text-center shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
-                                            <i class="fas fa-history"></i>
-                                            <span>Lihat Riwayat</span>
-                                        </a>
+                                <!-- Score Comparison -->
+                                <div class="mb-3">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">Rata-rata</span>
+                                        <span class="text-xs font-bold text-purple-600">{{ number_format($stats['average_score'], 1) }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min($stats['best_score'], 100) }}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Score Stats -->
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="text-center p-2 bg-purple-50 rounded-lg">
+                                        <div class="text-lg font-bold text-purple-600">{{ $stats['average_score'] }}</div>
+                                        <div class="text-xs text-gray-600">Rata-rata</div>
+                                    </div>
+                                    <div class="text-center p-2 bg-pink-50 rounded-lg">
+                                        <div class="text-lg font-bold text-pink-600">{{ $stats['best_score'] - $stats['average_score'] > 0 ? '+' . ($stats['best_score'] - $stats['average_score']) : '0' }}</div>
+                                        <div class="text-xs text-gray-600">Selisih</div>
+                                    </div>
+                                </div>
+
+                                @if($stats['best_score'] >= 90)
+                                    <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        🏆 Sempurna!
+                                    </div>
+                                @elseif($stats['best_score'] >= 80)
+                                    <div class="bg-gradient-to-r from-blue-400 to-indigo-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        ⭐ Sangat Baik!
                                     </div>
                                 @else
-                                    <div class="text-2xl font-black text-transparent bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text mb-1 tabular-nums">0/0</div>
-                                    <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">Jawaban Benar</div>
-
-                                    <!-- Empty State Info -->
-                                    <div class="mb-3">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs text-gray-600">Progress</span>
-                                            <span class="text-xs font-bold text-gray-400">0%</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-gray-300 h-1.5 rounded-full" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Empty State Stats -->
-                                    <div class="grid grid-cols-2 gap-2 mb-3">
-                                        <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                            <div class="text-lg font-bold text-gray-400">-</div>
-                                            <div class="text-xs text-gray-600">Jenis</div>
-                                        </div>
-                                        <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                            <div class="text-lg font-bold text-gray-400">-</div>
-                                            <div class="text-xs text-gray-600">Paket</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-xs text-gray-500 text-center font-medium bg-gray-50 px-3 py-1 rounded-full mb-3">Belum ada aktivitas</div>
-
-                                    <!-- Tombol Mulai Tryout -->
-                                    <div class="mt-2">
-                                        <a href="{{ route('tryouts.index') }}"
-                                           class="w-full bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all duration-200 text-center shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
-                                            <i class="fas fa-play"></i>
-                                            <span>Mulai Tryout</span>
-                                        </a>
+                                    <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        📈 Tingkatkan!
                                     </div>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Global Ranking Card -->
+                <div class="h-full group min-h-[280px]">
+                    <div class="relative h-full">
+                        <!-- Glow Effect -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
+
+                        <!-- Card Content -->
+                        <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full flex flex-col border border-gray-100 min-h-[280px]">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
+                                    <span class="text-white text-xl">🥇</span>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    @if($progressData['rank_position'] <= 100)
+                                        <div class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-full mb-1">
+                                            🌟 Top {{ round(($progressData['rank_position'] / $progressData['total_users']) * 100) }}%
+                                        </div>
+                                    @endif
+                                    <div class="text-xs text-gray-500 font-medium">Global</div>
+                                </div>
+                            </div>
+                            <div class="flex-grow flex flex-col justify-center">
+                                <div class="text-4xl font-black text-transparent bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text mb-2 tabular-nums">#{{ $progressData['rank_position'] }}</div>
+                                <div class="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Peringkat Global</div>
+
+                                <!-- Ranking Progress -->
+                                <div class="mb-3">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">Dari {{ number_format($progressData['total_users']) }} user</span>
+                                        <span class="text-xs font-bold text-orange-600">Top {{ round(($progressData['rank_position'] / $progressData['total_users']) * 100, 1) }}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-gradient-to-r from-orange-500 to-red-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min(100 - (($progressData['rank_position'] - 1) / $progressData['total_users']) * 100, 100) }}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Ranking Stats -->
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="text-center p-2 bg-orange-50 rounded-lg">
+                                        <div class="text-lg font-bold text-orange-600">{{ number_format($progressData['total_users']) }}</div>
+                                        <div class="text-xs text-gray-600">Total User</div>
+                                    </div>
+                                    <div class="text-center p-2 bg-red-50 rounded-lg">
+                                        <div class="text-lg font-bold text-red-600">{{ $progressData['rank_position'] > 1 ? $progressData['rank_position'] - 1 : 0 }}</div>
+                                        <div class="text-xs text-gray-600">Di Atas</div>
+                                    </div>
+                                </div>
+
+                                @if($progressData['rank_position'] <= 10)
+                                    <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        🏆 Elite!
+                                    </div>
+                                @elseif($progressData['rank_position'] <= 50)
+                                    <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        🌟 Top 50!
+                                    </div>
+                                @elseif($progressData['rank_position'] <= 100)
+                                    <div class="bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        ✅ Bagus!
+                                    </div>
+                                @else
+                                    <div class="bg-gradient-to-r from-indigo-400 to-blue-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        ⬆️ Naik!
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest Activity Card -->
+                <div class="h-full group min-h-[280px]">
+                <div class="relative h-full">
+                    <!-- Glow Effect -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-teal-500 to-green-500 rounded-3xl blur opacity-0 group-hover:opacity-40 transition duration-500"></div>
+
+                    <!-- Card Content -->
+                    <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 h-full flex flex-col border border-gray-100 min-h-[280px]">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-green-500 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 group-hover:animate-bounce transition-all duration-300">
+                                <span class="text-white text-xl">🕐</span>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                @if($userTryouts->count() >= 10)
+                                    <div class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-full mb-1">
+                                        📈 Aktif
+                                    </div>
+                                @endif
+                                <div class="text-xs text-gray-500 font-medium">Terbaru</div>
+                            </div>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center">
+                            @if($userTryouts->count() > 0)
+                                @php
+                                    $latestTryout = $userTryouts->first();
+                                    $totalSoal = $latestTryout->benar + $latestTryout->salah + $latestTryout->tidak_dijawab;
+                                    $tryout = $latestTryout->tryout;
+                                @endphp
+
+                                <!-- Judul Tryout -->
+                                <div class="text-sm font-bold text-gray-800 mb-2 truncate" title="{{ $tryout->title }}">
+                                    {{ strlen($tryout->title) > 20 ? substr($tryout->title, 0, 20) . '...' : $tryout->title }}
+                                </div>
+
+                                <div class="text-2xl font-black text-transparent bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text mb-1 tabular-nums">{{ $latestTryout->benar }}/{{ $totalSoal }}</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">Jawaban Benar</div>
+
+                                <!-- Tryout Info -->
+                                <div class="mb-3">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs text-gray-600">Skor</span>
+                                        <span class="text-xs font-bold text-teal-600">{{ number_format($latestTryout->persentase, 1) }}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-gradient-to-r from-teal-500 to-green-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ min($latestTryout->persentase, 100) }}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Tryout Details -->
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="text-center p-2 bg-teal-50 rounded-lg">
+                                        <div class="text-lg font-bold text-teal-600">{{ $tryout->type }}</div>
+                                        <div class="text-xs text-gray-600">Jenis</div>
+                                    </div>
+                                    <div class="text-center p-2 bg-green-50 rounded-lg">
+                                        <div class="text-lg font-bold text-green-600">{{ $tryout->isFree() ? 'FREE' : 'PREMIUM' }}</div>
+                                        <div class="text-xs text-gray-600">Paket</div>
+                                    </div>
+                                </div>
+
+                                @if($latestTryout->persentase >= 90)
+                                    <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        🏆 Sempurna!
+                                    </div>
+                                @elseif($latestTryout->persentase >= 80)
+                                    <div class="bg-gradient-to-r from-blue-400 to-indigo-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        ⭐ Sangat Baik!
+                                    </div>
+                                @elseif($latestTryout->persentase >= 60)
+                                    <div class="bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-bold px-3 py-1 rounded-full text-center shadow-md">
+                                        ✅ Bagus!
+                                    </div>
+                                @endif
+
+                                <!-- Tombol Lihat Riwayat -->
+                                <div class="mt-2">
+                                    <a href="{{ route('tryouts.index') }}"
+                                        class="w-full bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all duration-200 text-center shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
+                                        <i class="fas fa-history"></i>
+                                        <span>Lihat Riwayat</span>
+                                    </a>
+                                </div>
+                            @else
+                                <div class="text-2xl font-black text-transparent bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text mb-1 tabular-nums">0/0</div>
+                                <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">Jawaban Benar</div>
+
+                                <!-- Empty State Info -->
+                                <div class="mb-3">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">Progress</span>
+                                        <span class="text-xs font-bold text-gray-400">0%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-gray-300 h-1.5 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Empty State Stats -->
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="text-center p-2 bg-gray-50 rounded-lg">
+                                        <div class="text-lg font-bold text-gray-400">-</div>
+                                        <div class="text-xs text-gray-600">Jenis</div>
+                                    </div>
+                                    <div class="text-center p-2 bg-gray-50 rounded-lg">
+                                        <div class="text-lg font-bold text-gray-400">-</div>
+                                        <div class="text-xs text-gray-600">Paket</div>
+                                    </div>
+                                </div>
+
+                                <div class="text-xs text-gray-500 text-center font-medium bg-gray-50 px-3 py-1 rounded-full mb-3">Belum ada aktivitas</div>
+
+                                <!-- Tombol Mulai Tryout -->
+                                <div class="mt-2">
+                                    <a href="{{ route('tryouts.index') }}"
+                                        class="w-full bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all duration-200 text-center shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
+                                        <i class="fas fa-play"></i>
+                                        <span>Mulai Tryout</span>
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Performance Analytics Row (only if data exists) - Full Width -->
+
+        </div>
             @if($performanceByCategory->count() > 0)
-            <div class="mb-6">
-                <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8">
-                    <!-- Header with Clear Explanation -->
-                    <div class="mb-6">
-                        <div class="flex items-start justify-between mb-4">
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900 mb-2">Analisis Performa Tryout</h2>
-                                <p class="text-gray-600 mb-3">Statistik performa Anda berdasarkan <strong>semua tryout yang telah dikerjakan</strong></p>
-                                <div class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm">
-                                    <i class="fas fa-info-circle mr-2"></i>
-                                    <span>Data dari {{ $userTryouts->count() }} tryout terakhir</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-6">
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text">
-                                        {{ number_format($performanceByCategory->avg('avg_score'), 1) }}
+                <div class="mb-6">
+                    <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8">
+                        <!-- Header with Clear Explanation -->
+                        <div class="mb-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Analisis Performa Tryout</h2>
+                                    <p class="text-gray-600 mb-3">Statistik performa Anda berdasarkan <strong>semua tryout yang telah dikerjakan</strong></p>
+                                    <div class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        <span>Data dari {{ $userTryouts->count() }} tryout terakhir</span>
                                     </div>
-                                    <div class="text-sm text-gray-600">Skor Rata-rata</div>
                                 </div>
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
-                                        {{ $performanceByCategory->filter(fn($item) => $item['avg_score'] >= 65)->count() }}
+                                <div class="flex items-center space-x-6">
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text">
+                                            {{ number_format($performanceByCategory->avg('avg_score'), 1) }}
+                                        </div>
+                                        <div class="text-sm text-gray-600">Skor Rata-rata</div>
                                     </div>
-                                    <div class="text-sm text-gray-600">Lulus Passing Grade</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text">
-                                        {{ $performanceByCategory->filter(fn($item) => $item['avg_score'] < 65)->count() }}
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
+                                            {{ $performanceByCategory->filter(fn($item) => $item['avg_score'] >= 65)->count() }}
+                                        </div>
+                                        <div class="text-sm text-gray-600">Lulus Passing Grade</div>
                                     </div>
-                                    <div class="text-sm text-gray-600">Tidak Lulus</div>
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text">
+                                            {{ $performanceByCategory->filter(fn($item) => $item['avg_score'] < 65)->count() }}
+                                        </div>
+                                        <div class="text-sm text-gray-600">Tidak Lulus</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Enhanced Charts with Better UX - More Spacing & Clean Layout -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                        <!-- Distribusi Skor - Clean & Spacious -->
-                        <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                                <div class="mb-6">
-                                    <div class="flex items-center mb-2">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
-                                            <span class="text-white">📊</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-lg font-bold text-gray-900">Distribusi Skor</h3>
-                                            <p class="text-sm text-gray-500">Performa per kategori</p>
-                                        </div>
-                                    </div>
-                                    <div class="text-center mt-3">
-                                        <div class="text-sm text-gray-600">Skor Rata-rata</div>
-                                        <div class="text-2xl font-bold text-purple-600">{{ number_format($performanceByCategory->avg('avg_score'), 1) }}/100</div>
-                                    </div>
-                                </div>
-
-                                <!-- Chart with proper spacing -->
-                                <div class="flex justify-center mb-6">
-                                    <div class="relative h-40 w-40">
-                                        <canvas id="scoreDistributionChart"></canvas>
-                                    </div>
-                                </div>
-
-                                <!-- Performance Categories dengan Passing Grade Resmi -->
-                                <div class="space-y-3">
-                                    <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                                        <h4 class="text-sm font-bold text-blue-800 mb-3">📊 Passing Grade Resmi</h4>
-
-                                        <!-- CPNS SKD -->
-                                        <div class="mb-3">
-                                            <h5 class="text-xs font-semibold text-blue-700 mb-2">🏛️ CPNS SKD</h5>
-                                            <div class="grid grid-cols-3 gap-2 text-xs">
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-blue-600">TWK</div>
-                                                    <div class="text-gray-600">≥ 65</div>
-                                                </div>
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-blue-600">TIU</div>
-                                                    <div class="text-gray-600">≥ 80</div>
-                                                </div>
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-blue-600">TKP</div>
-                                                    <div class="text-gray-600">≥ 166</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- PPPK -->
-                                        <div>
-                                            <h5 class="text-xs font-semibold text-green-700 mb-2">📋 PPPK</h5>
-                                            <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-green-600">Manajerial</div>
-                                                    <div class="text-gray-600">≥ 85</div>
-                                                </div>
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-green-600">Sosio Kultural</div>
-                                                    <div class="text-gray-600">≥ 85</div>
-                                                </div>
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-green-600">Wawancara</div>
-                                                    <div class="text-gray-600">≥ 165</div>
-                                                </div>
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-green-600">Teknis</div>
-                                                    <div class="text-gray-600">≥ 85</div>
-                                                </div>
-                                                <div class="text-center p-2 bg-white rounded border">
-                                                    <div class="font-bold text-green-600">Non-Teknis</div>
-                                                    <div class="text-gray-600">≥ 85</div>
-                                                </div>
-                                                <div class="text-center p-2 bg-gray-50 rounded border">
-                                                    <div class="font-bold text-gray-600">Lainnya</div>
-                                                    <div class="text-gray-600">≥ 85</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
-                                        <div class="flex items-center">
-                                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                                            <span class="text-sm font-semibold text-green-700">Lulus Passing Grade</span>
-                                        </div>
-                                        <div class="flex items-center space-x-3">
-                                            <span class="text-lg font-bold text-green-600">{{ $excellentCount }}</span>
-                                            <span class="text-sm text-green-600 bg-white px-3 py-1 rounded-full border">{{ round(($excellentCount / max($performanceByCategory->count(), 1)) * 100) }}%</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                                        <div class="flex items-center">
-                                            <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
-                                            <span class="text-sm font-semibold text-orange-700">Tidak Lulus</span>
-                                        </div>
-                                        <div class="flex items-center space-x-3">
-                                            <span class="text-lg font-bold text-orange-600">{{ $needsImprovementCount }}</span>
-                                            <span class="text-sm text-orange-600 bg-white px-3 py-1 rounded-full border">{{ round(($needsImprovementCount / max($performanceByCategory->count(), 1)) * 100) }}%</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Summary Stats with proper spacing -->
-                                <div class="grid grid-cols-3 gap-3 mt-6">
-                                    <div class="text-center p-3 bg-purple-50 rounded-lg border border-purple-200">
-                                        <div class="text-lg font-bold text-purple-600">{{ $performanceByCategory->count() }}</div>
-                                        <div class="text-xs text-purple-600">Total Kategori</div>
-                                    </div>
-                                    <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
-                                        <div class="text-lg font-bold text-green-600">{{ round(($performanceByCategory->filter(fn($item) => $item['avg_score'] >= 65)->count() / max($performanceByCategory->count(), 1)) * 100) }}%</div>
-                                        <div class="text-xs text-green-600">Lulus Passing Grade</div>
-                                    </div>
-                                    <div class="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                        <div class="text-lg font-bold text-gray-600">{{ $userTryouts->count() }}</div>
-                                        <div class="text-xs text-gray-600">Tryout Dikerjakan</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Analisis Kategori - Better Layout -->
+                        <!-- Enhanced Charts with Better UX - More Spacing & Clean Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                            <!-- Distribusi Skor - Clean & Spacious -->
                             <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                                <div class="mb-6">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <div class="flex items-center">
-                                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                                                <span class="text-white">📈</span>
+                                    <div class="mb-6">
+                                        <div class="flex items-center mb-2">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                                                <span class="text-white">📊</span>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-bold text-gray-900">Analisis Kategori</h3>
-                                                <p class="text-sm text-gray-500">Per kategori</p>
+                                                <h3 class="text-lg font-bold text-gray-900">Distribusi Skor</h3>
+                                                <p class="text-sm text-gray-500">Performa per kategori</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <div class="text-sm text-gray-600">Skor Rata-rata</div>
+                                            <div class="text-2xl font-bold text-purple-600">{{ number_format($performanceByCategory->avg('avg_score'), 1) }}/100</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Chart with proper spacing -->
+                                    <div class="flex justify-center mb-6">
+                                        <div class="relative h-40 w-40">
+                                            <canvas id="scoreDistributionChart"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <!-- Performance Categories dengan Passing Grade Resmi -->
+                                    <div class="space-y-3">
+                                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                            <h4 class="text-sm font-bold text-blue-800 mb-3">📊 Passing Grade Resmi</h4>
+
+                                            <!-- CPNS SKD -->
+                                            <div class="mb-3">
+                                                <h5 class="text-xs font-semibold text-blue-700 mb-2">🏛️ CPNS SKD</h5>
+                                                <div class="grid grid-cols-3 gap-2 text-xs">
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-blue-600">TWK</div>
+                                                        <div class="text-gray-600">≥ 65</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-blue-600">TIU</div>
+                                                        <div class="text-gray-600">≥ 80</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-blue-600">TKP</div>
+                                                        <div class="text-gray-600">≥ 166</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- PPPK -->
+                                            <div>
+                                                <h5 class="text-xs font-semibold text-green-700 mb-2">📋 PPPK</h5>
+                                                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-green-600">Manajerial</div>
+                                                        <div class="text-gray-600">≥ 85</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-green-600">Sosio Kultural</div>
+                                                        <div class="text-gray-600">≥ 85</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-green-600">Wawancara</div>
+                                                        <div class="text-gray-600">≥ 165</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-green-600">Teknis</div>
+                                                        <div class="text-gray-600">≥ 85</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-white rounded border">
+                                                        <div class="font-bold text-green-600">Non-Teknis</div>
+                                                        <div class="text-gray-600">≥ 85</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-gray-50 rounded border">
+                                                        <div class="font-bold text-gray-600">Lainnya</div>
+                                                        <div class="text-gray-600">≥ 85</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
+                                            <div class="flex items-center">
+                                                <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                                <span class="text-sm font-semibold text-green-700">Lulus Passing Grade</span>
+                                            </div>
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg font-bold text-green-600">{{ $excellentCount }}</span>
+                                                <span class="text-sm text-green-600 bg-white px-3 py-1 rounded-full border">{{ round(($excellentCount / max($performanceByCategory->count(), 1)) * 100) }}%</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg border border-orange-200">
+                                            <div class="flex items-center">
+                                                <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                                                <span class="text-sm font-semibold text-orange-700">Tidak Lulus</span>
+                                            </div>
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg font-bold text-orange-600">{{ $needsImprovementCount }}</span>
+                                                <span class="text-sm text-orange-600 bg-white px-3 py-1 rounded-full border">{{ round(($needsImprovementCount / max($performanceByCategory->count(), 1)) * 100) }}%</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-right">
-                                        <div class="text-sm text-gray-600">Kategori Terbaik</div>
-                                        <div class="text-xl font-bold text-green-600">{{ $performanceByCategory->sortByDesc('avg_score')->first()['kategori'] ?? '-' }}</div>
+
+                                    <!-- Summary Stats with proper spacing -->
+                                    <div class="grid grid-cols-3 gap-3 mt-6">
+                                        <div class="text-center p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                            <div class="text-lg font-bold text-purple-600">{{ $performanceByCategory->count() }}</div>
+                                            <div class="text-xs text-purple-600">Total Kategori</div>
+                                        </div>
+                                        <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                                            <div class="text-lg font-bold text-green-600">{{ round(($performanceByCategory->filter(fn($item) => $item['avg_score'] >= 65)->count() / max($performanceByCategory->count(), 1)) * 100) }}%</div>
+                                            <div class="text-xs text-green-600">Lulus Passing Grade</div>
+                                        </div>
+                                        <div class="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                            <div class="text-lg font-bold text-gray-600">{{ $userTryouts->count() }}</div>
+                                            <div class="text-xs text-gray-600">Tryout Dikerjakan</div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Chart with proper size -->
-                                <div class="relative h-48 mb-6">
-                                    <canvas id="categoryComparisonChart"></canvas>
+                                <!-- Analisis Kategori - Better Layout -->
+                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                                    <div class="mb-6">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                                                    <span class="text-white">📈</span>
+                                                </div>
+                                                <div>
+                                                    <h3 class="text-lg font-bold text-gray-900">Analisis Kategori</h3>
+                                                    <p class="text-sm text-gray-500">Per kategori</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-sm text-gray-600">Kategori Terbaik</div>
+                                            <div class="text-xl font-bold text-green-600">{{ $performanceByCategory->sortByDesc('avg_score')->first()['kategori'] ?? '-' }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Chart with proper size -->
+                                    <div class="relative h-48 mb-6">
+                                        <canvas id="categoryComparisonChart"></canvas>
+                                    </div>
+
+                                    <!-- Statistics with better spacing -->
+                                    <div class="space-y-4">
+                                        <div class="bg-gray-50 rounded-lg p-4">
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Range Skor</h4>
+                                            <div class="grid grid-cols-3 gap-3">
+                                                <div class="text-center">
+                                                    <div class="text-lg font-bold text-blue-600">{{ $performanceByCategory->pluck('avg_score')->max() }}/100</div>
+                                                    <div class="text-xs text-gray-600">Tertinggi</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-lg font-bold text-orange-600">{{ $performanceByCategory->pluck('avg_score')->min() }}/100</div>
+                                                    <div class="text-xs text-gray-600">Terendah</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-lg font-bold text-purple-600">{{ $performanceByCategory->pluck('avg_score')->max() - $performanceByCategory->pluck('avg_score')->min() }}</div>
+                                                    <div class="text-xs text-gray-600">Range</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-gray-50 rounded-lg p-4">
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Performa Kategori</h4>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div class="text-center">
+                                                    <div class="text-lg font-bold text-green-600">{{ $performanceByCategory->filter(fn($item) => $item['avg_score'] >= 60)->count() }}</div>
+                                                    <div class="text-xs text-gray-600">Kategori Baik (≥60)</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-lg font-bold text-orange-600">{{ $needsImprovementCount }}</div>
+                                                    <div class="text-xs text-gray-600">Perlu Fokus (<60)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-purple-50 rounded-lg p-4 text-center">
+                                            <div class="text-2xl font-bold text-purple-600">{{ number_format($performanceByCategory->avg('avg_score'), 1) }}/100</div>
+                                            <div class="text-sm text-purple-600">Skor Rata-rata Keseluruhan</div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Statistics with better spacing -->
-                                <div class="space-y-4">
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Range Skor</h4>
-                                        <div class="grid grid-cols-3 gap-3">
-                                            <div class="text-center">
-                                                <div class="text-lg font-bold text-blue-600">{{ $performanceByCategory->pluck('avg_score')->max() }}/100</div>
-                                                <div class="text-xs text-gray-600">Tertinggi</div>
+                                <!-- Analisis Performa - Clean & Organized -->
+                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                                    <div class="mb-6">
+                                        <div class="flex items-center mb-2">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mr-3">
+                                                <span class="text-white">💡</span>
                                             </div>
-                                            <div class="text-center">
-                                                <div class="text-lg font-bold text-orange-600">{{ $performanceByCategory->pluck('avg_score')->min() }}/100</div>
-                                                <div class="text-xs text-gray-600">Terendah</div>
-                                            </div>
-                                            <div class="text-center">
-                                                <div class="text-lg font-bold text-purple-600">{{ $performanceByCategory->pluck('avg_score')->max() - $performanceByCategory->pluck('avg_score')->min() }}</div>
-                                                <div class="text-xs text-gray-600">Range</div>
+                                            <div>
+                                                <h3 class="text-lg font-bold text-gray-900">Analisis Performa</h3>
+                                                <p class="text-sm text-gray-500">Insights & rekomendasi</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Performa Kategori</h4>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <div class="text-center">
-                                                <div class="text-lg font-bold text-green-600">{{ $performanceByCategory->filter(fn($item) => $item['avg_score'] >= 60)->count() }}</div>
-                                                <div class="text-xs text-gray-600">Kategori Baik (≥60)</div>
-                                            </div>
-                                            <div class="text-center">
-                                                <div class="text-lg font-bold text-orange-600">{{ $needsImprovementCount }}</div>
-                                                <div class="text-xs text-gray-600">Perlu Fokus (<60)</div>
+                                    <div class="space-y-6">
+                                        <!-- Performance Summary -->
+                                        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4 border border-purple-200">
+                                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                                <i class="fas fa-chart-line mr-2 text-purple-600"></i>
+                                                Statistik Performa
+                                            </h4>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div class="text-center">
+                                                    <div class="text-2xl font-bold text-purple-600">{{ number_format($performanceByCategory->avg('avg_score'), 1) }}</div>
+                                                    <div class="text-sm text-gray-600">Skor Rata-rata</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-2xl font-bold text-green-600">{{ round(($performanceByCategory->filter(fn($item) => $item['avg_score'] >= 60)->count() / max($performanceByCategory->count(), 1)) * 100) }}%</div>
+                                                    <div class="text-sm text-gray-600">Tingkat Kelulusan</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="bg-purple-50 rounded-lg p-4 text-center">
-                                        <div class="text-2xl font-bold text-purple-600">{{ number_format($performanceByCategory->avg('avg_score'), 1) }}/100</div>
-                                        <div class="text-sm text-purple-600">Skor Rata-rata Keseluruhan</div>
+                                        <!-- Category Analysis -->
+                                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200">
+                                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                                <i class="fas fa-chart-bar mr-2 text-blue-600"></i>
+                                                Analisis Kategori
+                                            </h4>
+                                            <div class="space-y-2">
+                                                <div class="flex justify-between items-center py-2 border-b border-blue-100">
+                                                    <span class="text-sm text-gray-600">Lulus Passing Grade (≥65)</span>
+                                                    <span class="font-bold text-green-600 text-lg">{{ $performanceByCategory->filter(fn($item) => $item['avg_score'] >= 65)->count() }}</span>
+                                                </div>
+                                                <div class="flex justify-between items-center py-2 border-b border-blue-100">
+                                                    <span class="text-sm text-gray-600">Tidak Lulus (<65)</span>
+                                                    <span class="font-bold text-orange-600 text-lg">{{ $performanceByCategory->filter(fn($item) => $item['avg_score'] < 65)->count() }}</span>
+                                                </div>
+                                                <div class="flex justify-between items-center py-2">
+                                                    <span class="text-sm text-gray-600">Range Skor</span>
+                                                    <span class="font-bold text-blue-600 text-lg">{{ $performanceByCategory->pluck('avg_score')->min() }} - {{ $performanceByCategory->pluck('avg_score')->max() }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Recommendations -->
+                                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                                            <h4 class="text-xs font-bold text-gray-700 mb-1">🎯 Rekomendasi Aksi</h4>
+
+                                            @if($allCategoriesPassed)
+                                                <div class="text-xs text-green-700">
+                                                    <div class="font-bold">🎉 Semua Kategori Lulus Passing Grade!</div>
+                                                    <div>Fokus kecepatan dan optimisasi waktu</div>
+                                                </div>
+                                            @elseif(count($criticalCategories) == 1)
+                                                <div class="text-xs text-orange-700">
+                                                    <div class="font-bold">📚 Fokus 1 Kategori</div>
+                                                    <div>{{ $criticalCategories[0]['name'] }}: butuh {{ $criticalCategories[0]['gap'] }} poin lagi</div>
+                                                </div>
+                                            @else
+                                                <div class="text-xs text-red-700">
+                                                    <div class="font-bold">🔥 {{ count($criticalCategories) }} Kategori Perlu Fokus</div>
+                                                    <div>TWK: ≥65, TIU: ≥80, TKP: ≥166</div>
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Analisis Performa - Clean & Organized -->
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                                <div class="mb-6">
-                                    <div class="flex items-center mb-2">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mr-3">
-                                            <span class="text-white">💡</span>
+                            <!-- Deep Performance Analysis -->
+                            <div class="border-t border-gray-200/50 pt-8">
+                                <!-- Performance Trend Analysis -->
+                                <div class="mb-8">
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-3">
+                                            <i class="fas fa-analytics text-white text-lg"></i>
                                         </div>
                                         <div>
-                                            <h3 class="text-lg font-bold text-gray-900">Analisis Performa</h3>
-                                            <p class="text-sm text-gray-500">Insights & rekomendasi</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-6">
-                                    <!-- Performance Summary -->
-                                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4 border border-purple-200">
-                                        <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                            <i class="fas fa-chart-line mr-2 text-purple-600"></i>
-                                            Statistik Performa
-                                        </h4>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div class="text-center">
-                                                <div class="text-2xl font-bold text-purple-600">{{ number_format($performanceByCategory->avg('avg_score'), 1) }}</div>
-                                                <div class="text-sm text-gray-600">Skor Rata-rata</div>
-                                            </div>
-                                            <div class="text-center">
-                                                <div class="text-2xl font-bold text-green-600">{{ round(($performanceByCategory->filter(fn($item) => $item['avg_score'] >= 60)->count() / max($performanceByCategory->count(), 1)) * 100) }}%</div>
-                                                <div class="text-sm text-gray-600">Tingkat Kelulusan</div>
-                                            </div>
+                                            <h3 class="text-xl font-bold text-gray-900">Analisis Trend Performa</h3>
+                                            <p class="text-sm text-gray-600">Identifikasi pola dan area pengembangan Anda</p>
                                         </div>
                                     </div>
 
-                                    <!-- Category Analysis -->
-                                    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200">
-                                        <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                            <i class="fas fa-chart-bar mr-2 text-blue-600"></i>
-                                            Analisis Kategori
-                                        </h4>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between items-center py-2 border-b border-blue-100">
-                                                <span class="text-sm text-gray-600">Lulus Passing Grade (≥65)</span>
-                                                <span class="font-bold text-green-600 text-lg">{{ $performanceByCategory->filter(fn($item) => $item['avg_score'] >= 65)->count() }}</span>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                        <!-- Strengths -->
+                                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200/50">
+                                            <div class="flex items-center mb-3">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-star text-white"></i>
+                                                </div>
+                                                <h4 class="font-bold text-green-800">Keunggulan</h4>
                                             </div>
-                                            <div class="flex justify-between items-center py-2 border-b border-blue-100">
-                                                <span class="text-sm text-gray-600">Tidak Lulus (<65)</span>
-                                                <span class="font-bold text-orange-600 text-lg">{{ $performanceByCategory->filter(fn($item) => $item['avg_score'] < 65)->count() }}</span>
+                                            @if(isset($strongCategories) && $strongCategories->count() > 0)
+                                                <div class="space-y-2">
+                                                    @foreach($strongCategories->take(2) as $category)
+                                                        <div class="flex justify-between items-center">
+                                                            <span class="text-sm font-medium text-green-700">{{ $category['kategori'] }}</span>
+                                                            <span class="text-sm font-bold text-green-600">{{ $category['avg_score'] }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <p class="text-sm text-green-600">Belum ada kategori dengan performa ≥80</p>
+                                            @endif
+                                        </div>
+
+                                        <!-- Average Performance -->
+                                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200/50">
+                                            <div class="flex items-center mb-3">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-balance-scale text-white"></i>
+                                                </div>
+                                                <h4 class="font-bold text-blue-800">Performa Rata-rata</h4>
                                             </div>
-                                            <div class="flex justify-between items-center py-2">
-                                                <span class="text-sm text-gray-600">Range Skor</span>
-                                                <span class="font-bold text-blue-600 text-lg">{{ $performanceByCategory->pluck('avg_score')->min() }} - {{ $performanceByCategory->pluck('avg_score')->max() }}</span>
+                                            <div class="text-center py-4">
+                                                <p class="text-sm text-gray-600">Analisis performa per kategori</p>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Recommendations -->
-                                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
-                                        <h4 class="text-xs font-bold text-gray-700 mb-1">🎯 Rekomendasi Aksi</h4>
-
-                                        @if($allCategoriesPassed)
-                                            <div class="text-xs text-green-700">
-                                                <div class="font-bold">🎉 Semua Kategori Lulus Passing Grade!</div>
-                                                <div>Fokus kecepatan dan optimisasi waktu</div>
+                                        <!-- Improvement Areas -->
+                                        <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-4 border border-orange-200/50">
+                                            <div class="flex items-center mb-3">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-rocket text-white"></i>
+                                                </div>
+                                                <h4 class="font-bold text-orange-800">Area Fokus</h4>
                                             </div>
-                                        @elseif(count($criticalCategories) == 1)
-                                            <div class="text-xs text-orange-700">
-                                                <div class="font-bold">📚 Fokus 1 Kategori</div>
-                                                <div>{{ $criticalCategories[0]['name'] }}: butuh {{ $criticalCategories[0]['gap'] }} poin lagi</div>
-                                            </div>
-                                        @else
-                                            <div class="text-xs text-red-700">
-                                                <div class="font-bold">🔥 {{ count($criticalCategories) }} Kategori Perlu Fokus</div>
-                                                <div>TWK: ≥65, TIU: ≥80, TKP: ≥166</div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Deep Performance Analysis -->
-                        <div class="border-t border-gray-200/50 pt-8">
-                            <!-- Performance Trend Analysis -->
-                            <div class="mb-8">
-                                <div class="flex items-center mb-6">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-3">
-                                        <i class="fas fa-analytics text-white text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-xl font-bold text-gray-900">Analisis Trend Performa</h3>
-                                        <p class="text-sm text-gray-600">Identifikasi pola dan area pengembangan Anda</p>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                                    <!-- Strengths -->
-                                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200/50">
-                                        <div class="flex items-center mb-3">
-                                            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
-                                                <i class="fas fa-star text-white"></i>
-                                            </div>
-                                            <h4 class="font-bold text-green-800">Keunggulan</h4>
-                                        </div>
-                                        @if(isset($strongCategories) && $strongCategories->count() > 0)
-                                            <div class="space-y-2">
-                                                @foreach($strongCategories->take(2) as $category)
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-sm font-medium text-green-700">{{ $category['kategori'] }}</span>
-                                                        <span class="text-sm font-bold text-green-600">{{ $category['avg_score'] }}</span>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @else
-                                            <p class="text-sm text-green-600">Belum ada kategori dengan performa ≥80</p>
-                                        @endif
-                                    </div>
-
-                                    <!-- Average Performance -->
-                                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200/50">
-                                        <div class="flex items-center mb-3">
-                                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
-                                                <i class="fas fa-balance-scale text-white"></i>
-                                            </div>
-                                            <h4 class="font-bold text-blue-800">Performa Rata-rata</h4>
-                                        </div>
-                                        <div class="text-center py-4">
-                                            <p class="text-sm text-gray-600">Analisis performa per kategori</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Improvement Areas -->
-                                    <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-4 border border-orange-200/50">
-                                        <div class="flex items-center mb-3">
-                                            <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
-                                                <i class="fas fa-rocket text-white"></i>
-                                            </div>
-                                            <h4 class="font-bold text-orange-800">Area Fokus</h4>
-                                        </div>
-                                        @if(isset($weakCategories) && $weakCategories->count() > 0)
-                                            <div class="space-y-2">
-                                                <h4 class="text-xs font-semibold text-orange-700 mb-2">⚠️ Kategori Perlu Fokus:</h4>
-                                                @foreach($weakCategories->take(3) as $category)
-                                                    @php
-                                                        $categoryName = strtoupper($category['kategori']);
-                                                        $passingScore = $passingGrades->get($categoryName, $passingGrades->get('DEFAULT', 85));
-                                                        $selisih = $passingScore - $category['avg_score'];
-                                                    @endphp
-                                                    <div class="flex justify-between items-center p-2 bg-white rounded border">
-                                                        <div>
-                                                            <div class="flex items-center gap-1">
-                                                                <span class="text-sm font-medium text-orange-700">{{ ($passingGrades->has($categoryName) && ($categoryName == 'TWK' || $categoryName == 'TIU' || $categoryName == 'TKP')) ? '🏛️' : '📋' }} {{ $category['kategori'] }}</span>
+                                            @if(isset($weakCategories) && $weakCategories->count() > 0)
+                                                <div class="space-y-2">
+                                                    <h4 class="text-xs font-semibold text-orange-700 mb-2">⚠️ Kategori Perlu Fokus:</h4>
+                                                    @foreach($weakCategories->take(3) as $category)
+                                                        @php
+                                                            $categoryName = strtoupper($category['kategori']);
+                                                            $passingScore = $passingGrades->get($categoryName, $passingGrades->get('DEFAULT', 85));
+                                                            $selisih = $passingScore - $category['avg_score'];
+                                                        @endphp
+                                                        <div class="flex justify-between items-center p-2 bg-white rounded border">
+                                                            <div>
+                                                                <div class="flex items-center gap-1">
+                                                                    <span class="text-sm font-medium text-orange-700">{{ ($passingGrades->has($categoryName) && ($categoryName == 'TWK' || $categoryName == 'TIU' || $categoryName == 'TKP')) ? '🏛️' : '📋' }} {{ $category['kategori'] }}</span>
+                                                                </div>
+                                                                <div class="text-xs text-gray-500">Passing: {{ $passingScore }} (Kurang: {{ round($selisih, 1) }})</div>
                                                             </div>
-                                                            <div class="text-xs text-gray-500">Passing: {{ $passingScore }} (Kurang: {{ round($selisih, 1) }})</div>
+                                                            <div class="text-right">
+                                                                <span class="text-sm font-bold text-orange-600">{{ $category['avg_score'] }}</span>
+                                                                <div class="text-xs text-red-600">❌ BELUM LULUS</div>
+                                                            </div>
                                                         </div>
-                                                        <div class="text-right">
-                                                            <span class="text-sm font-bold text-orange-600">{{ $category['avg_score'] }}</span>
-                                                            <div class="text-xs text-red-600">❌ BELUM LULUS</div>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <p class="text-sm text-green-600">🎉 Semua kategori lulus passing grade!</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- AI Recommendations Section -->
+                                @isset($aiRecommendations)
+                                    <x-ai-recommendations :aiRecommendations="$aiRecommendations" />
+                                @else
+                                    <!-- Fallback to original recommendations if AI data not available -->
+                                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200/50">
+                                        <div class="flex items-center mb-4">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mr-3">
+                                                <i class="fas fa-lightbulb text-white text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-xl font-bold text-indigo-900">Rekomendasi Personal</h3>
+                                                <p class="text-sm text-indigo-700">Strategi berdasarkan analisis performa Anda</p>
+                                            </div>
+                                        </div>
+
+                                        @if($totalAvg >= 80)
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="bg-white/80 rounded-lg p-4">
+                                                    <h4 class="font-bold text-green-800 mb-2">🏆 Pertahankan Keunggulan</h4>
+                                                    <p class="text-sm text-gray-700">Performa Anda luar biasa! Fokus pada pemeliharaan dan tingkatkan kecepatan pengerjaan.</p>
+                                                </div>
+                                                <div class="bg-white/80 rounded-lg p-4">
+                                                    <h4 class="font-bold text-blue-800 mb-2">🎯 Target Tertinggi</h4>
+                                                    <p class="text-sm text-gray-700">Coba tryout dengan tingkat kesulitas lebih tinggi untuk terus berkembang.</p>
+                                                </div>
+                                            </div>
+                                        @elseif($totalAvg >= 60)
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="bg-white/80 rounded-lg p-4">
+                                                    <h4 class="font-bold text-orange-800 mb-2">📈 Optimasi Kategori Lemah</h4>
+                                                    <p class="text-sm text-gray-700">Alokasikan 70% waktu belajar untuk {{ $needsImprovementCount }} kategori yang perlu perbaikan.</p>
+                                                </div>
+                                                <div class="bg-white/80 rounded-lg p-4">
+                                                    <h4 class="font-bold text-blue-800 mb-2">⚡ Latihan Terstruktur</h4>
+                                                    <p class="text-sm text-gray-700">Jadwalkan 2-3 sesi tryout per minggu untuk kategori target Anda.</p>
+                                                </div>
                                             </div>
                                         @else
-                                            <p class="text-sm text-green-600">🎉 Semua kategori lulus passing grade!</p>
+                                            <div class="bg-white/80 rounded-lg p-4">
+                                                <h4 class="font-bold text-red-800 mb-2">🚀 Program Intensif Dibutuhkan</h4>
+                                                <p class="text-sm text-gray-700 mb-3">Prioritaskan fondasi dasar dan konsistensi belajar harian.</p>
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    <div class="text-center p-2 bg-red-50 rounded">
+                                                        <div class="text-lg font-bold text-red-600">{{ $needsImprovementCount }}</div>
+                                                        <div class="text-xs text-red-700">Kategori Fokus</div>
+                                                    </div>
+                                                    <div class="text-center p-2 bg-orange-50 rounded">
+                                                        <div class="text-lg font-bold text-orange-600">30+ menit</div>
+                                                        <div class="text-xs text-orange-700">Harian</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endif
                                     </div>
-                                </div>
-                            </div>
+                                @endisset
 
-                            <!-- Personalized Recommendations -->
-                            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200/50">
-                                <div class="flex items-center mb-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mr-3">
-                                        <i class="fas fa-lightbulb text-white text-lg"></i>
+                                <!-- Performance Insights Footer -->
+                                <div class="mt-6 text-center">
+                                    <div class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                        <i class="fas fa-chart-line mr-2"></i>
+                                        Analisis berdasarkan {{ $userTryouts->count() }} tryout • Diperbarui: {{ now()->format('d M Y H:i') }}
                                     </div>
-                                    <div>
-                                        <h3 class="text-xl font-bold text-indigo-900">Rekomendasi Personal</h3>
-                                        <p class="text-sm text-indigo-700">Strategi berdasarkan analisis performa Anda</p>
-                                    </div>
-                                </div>
-
-
-                                @if($totalAvg >= 80)
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div class="bg-white/80 rounded-lg p-4">
-                                            <h4 class="font-bold text-green-800 mb-2">🏆 Pertahankan Keunggulan</h4>
-                                            <p class="text-sm text-gray-700">Performa Anda luar biasa! Fokus pada pemeliharaan dan tingkatkan kecepatan pengerjaan.</p>
-                                        </div>
-                                        <div class="bg-white/80 rounded-lg p-4">
-                                            <h4 class="font-bold text-blue-800 mb-2">🎯 Target Tertinggi</h4>
-                                            <p class="text-sm text-gray-700">Coba tryout dengan tingkat kesulitas lebih tinggi untuk terus berkembang.</p>
-                                        </div>
-                                    </div>
-                                @elseif($totalAvg >= 60)
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div class="bg-white/80 rounded-lg p-4">
-                                            <h4 class="font-bold text-orange-800 mb-2">📈 Optimasi Kategori Lemah</h4>
-                                            <p class="text-sm text-gray-700">Alokasikan 70% waktu belajar untuk {{ $needsImprovementCount }} kategori yang perlu perbaikan.</p>
-                                        </div>
-                                        <div class="bg-white/80 rounded-lg p-4">
-                                            <h4 class="font-bold text-blue-800 mb-2">⚡ Latihan Terstruktur</h4>
-                                            <p class="text-sm text-gray-700">Jadwalkan 2-3 sesi tryout per minggu untuk kategori target Anda.</p>
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="bg-white/80 rounded-lg p-4">
-                                        <h4 class="font-bold text-red-800 mb-2">🚀 Program Intensif Dibutuhkan</h4>
-                                        <p class="text-sm text-gray-700 mb-3">Prioritaskan fondasi dasar dan konsistensi belajar harian.</p>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <div class="text-center p-2 bg-red-50 rounded">
-                                                <div class="text-lg font-bold text-red-600">{{ $needsImprovementCount }}</div>
-                                                <div class="text-xs text-red-700">Kategori Fokus</div>
-                                            </div>
-                                            <div class="text-center p-2 bg-orange-50 rounded">
-                                                <div class="text-lg font-bold text-orange-600">30+ menit</div>
-                                                <div class="text-xs text-orange-700">Harian</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <!-- Performance Insights Footer -->
-                            <div class="mt-6 text-center">
-                                <div class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                    <i class="fas fa-chart-line mr-2"></i>
-                                    Analisis berdasarkan {{ $userTryouts->count() }} tryout • Diperbarui: {{ now()->format('d M Y H:i') }}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                @endif
-            </div>
-        </div>
+            @endif
     </div>
 
     <!-- Main Content Container - No Gap -->
