@@ -1,0 +1,454 @@
+<?php
+
+namespace App\Services;
+
+use Spatie\Activitylog\Models\Activity;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use App\Jobs\LogActivityJob;
+
+class ActivityLogService
+{
+    /**
+     * Check if async logging is enabled (for VPS/Cloud hosting)
+     * For shared hosting, this should be false in .env
+     */
+    private static function isAsyncEnabled(): bool
+    {
+        return config('app.activity_logging_async', false);
+    }
+
+    /**
+     * Check if logging is enabled
+     */
+    private static function isLoggingEnabled(): bool
+    {
+        return config('app.activity_logging_enabled', true);
+    }
+    /**
+     * Log user registration activity
+     */
+    public static function logUserRegistration($user, $additionalData = [])
+    {
+        $properties = [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'phone_number' => $user->phone_number,
+            'ip_address' => Request::ip(),
+            'user_agent' => Request::userAgent(),
+            'registration_step' => 'completed'
+        ];
+
+        if (!empty($additionalData)) {
+            $properties = array_merge($properties, $additionalData);
+        }
+
+        activity('registration')
+            ->causedBy($user)
+            ->performedOn($user)
+            ->withProperties($properties)
+            ->log('Pendaftaran pengguna berhasil diselesaikan');
+    }
+
+    /**
+     * Log user login activity
+     */
+    public static function logUserLogin($user, $success = true, $method = 'email')
+    {
+        $properties = [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'phone_number' => $user->phone_number,
+            'ip_address' => Request::ip(),
+            'user_agent' => Request::userAgent(),
+            'login_method' => $method,
+            'success' => $success
+        ];
+
+        activity('authentication')
+            ->causedBy($user)
+            ->performedOn($user)
+            ->withProperties($properties)
+            ->log($success ? 'Pengguna berhasil masuk' : 'Percobaan masuk gagal');
+    }
+
+    /**
+     * Log user logout activity
+     */
+    public static function logUserLogout($user)
+    {
+        $properties = [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip_address' => Request::ip(),
+            'user_agent' => Request::userAgent()
+        ];
+
+        activity('authentication')
+            ->causedBy($user)
+            ->performedOn($user)
+            ->withProperties($properties)
+            ->log('Pengguna keluar dari sistem');
+    }
+
+    /**
+     * Log any authenticated user activity (after login)
+     * Automatically chooses sync/async based on configuration
+     */
+    public static function logAuthenticatedActivity($description, $subject = null, $properties = [])
+    {
+        if (!self::isLoggingEnabled() || !Auth::check()) {
+            return;
+        }
+
+        // Use async if enabled (VPS/Cloud), otherwise sync (Shared hosting)
+        if (self::isAsyncEnabled()) {
+            return self::logAuthenticatedActivityAsync($description, $subject, $properties);
+        }
+
+        // Sync logging for shared hosting
+        try {
+            $user = Auth::user();
+            $defaultProperties = [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'ip_address' => Request::ip(),
+                'user_agent' => Request::userAgent(),
+                'timestamp' => now()
+            ];
+
+            $allProperties = array_merge($defaultProperties, $properties);
+
+            $activityLog = activity('user_activity')
+                ->causedBy($user)
+                ->withProperties($allProperties);
+
+            if ($subject) {
+                $activityLog->performedOn($subject);
+            }
+
+            $activityLog->log($description);
+        } catch (\Exception $e) {
+            // Fail silently in shared hosting to avoid breaking app
+            \Log::warning('Activity logging failed: ' . $e->getMessage());
+        }
+    }
+
+        $activityLog->log($description);
+    }
+
+    /**
+     * Log referral usage during registration
+     */
+    public static function logReferralUsed($referralCode, $newUserId, $referrerId)
+    {
+        $properties = [
+            'referral_code' => $referralCode,
+            'new_user_id' => $newUserId,
+            'referrer_id' => $referrerId,
+            'ip_address' => Request::ip(),
+            'user_agent' => Request::userAgent()
+        ];
+
+        activity('referral')
+            ->causedBy(Auth::user()) // Add causer
+            ->withProperties($properties)
+            ->log('Kode referral digunakan saat pendaftaran');
+    }
+
+    /**
+     * Get activity logs for a specific user with optimized query
+     */
+    public static function getUserActivities($userId, $limit = 50)
+    {
+        return Activity::select([
+                'id', 'log_name', 'description', 'subject_type', 'subject_id',
+                'causer_type', 'causer_id', 'properties', 'batch_uuid', 'event',
+                'created_at'
+            ])
+            ->where(function($query) use ($userId) {
+                $query->where('causer_id', $userId)
+                      ->orWhere('subject_id', $userId);
+            })
+            ->with(['causer:id,name,email', 'subject'])
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->map(function($activity) {
+                return [
+                    'id' => $activity->id,
+                    'type' => $activity->log_name,
+                    'description' => $activity->description,
+                    'event' => $activity->event,
+                    'user' => [
+                        'id' => $activity->causer?->id,
+                        'name' => $activity->causer?->name,
+                        'email' => $activity->causer?->email,
+                    ],
+                    'properties' => $activity->properties,
+                    'ip_address' => $activity->properties['ip_address'] ?? null,
+                    'user_agent' => $activity->properties['user_agent'] ?? null,
+                    'url' => $activity->properties['url'] ?? null,
+                    'method' => $activity->properties['method'] ?? null,
+                    'created_at' => $activity->created_at->format('Y-m-d H:i:s'),
+                    'created_at_human' => $activity->created_at->diffForHumans(),
+                ];
+            });
+    }
+
+    /**
+     * Get recent activities with optimized query and complete data
+     */
+    public static function getRecentActivities($limit = 100)
+    {
+        return Activity::select([
+                'id', 'log_name', 'description', 'subject_type', 'subject_id',
+                'causer_type', 'causer_id', 'properties', 'batch_uuid', 'event',
+                'created_at'
+            ])
+            ->with(['causer:id,name,email'])
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->map(function($activity) {
+                return [
+                    'id' => $activity->id,
+                    'type' => $activity->log_name,
+                    'description' => $activity->description,
+                    'event' => $activity->event,
+                    'user' => [
+                        'id' => $activity->causer?->id,
+                        'name' => $activity->causer?->name ?? 'System',
+                        'email' => $activity->causer?->email,
+                    ],
+                    'properties' => $activity->properties,
+                    'ip_address' => $activity->properties['ip_address'] ?? null,
+                    'user_agent' => $activity->properties['user_agent'] ?? null,
+                    'url' => $activity->properties['url'] ?? null,
+                    'method' => $activity->properties['method'] ?? null,
+                    'route' => $activity->properties['route'] ?? null,
+                    'created_at' => $activity->created_at->format('Y-m-d H:i:s'),
+                    'created_at_human' => $activity->created_at->diffForHumans(),
+                ];
+            });
+    }
+
+    /**
+     * Get authentication logs (register/login) with optimized query
+     */
+    public static function getAuthLogs($limit = 100)
+    {
+        return Activity::select([
+                'id', 'log_name', 'description', 'causer_type', 'causer_id',
+                'properties', 'event', 'created_at'
+            ])
+            ->whereIn('log_name', ['registration', 'authentication'])
+            ->with(['causer:id,name,email'])
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->map(function($activity) {
+                return [
+                    'id' => $activity->id,
+                    'type' => $activity->log_name,
+                    'description' => $activity->description,
+                    'event' => $activity->event,
+                    'user' => [
+                        'id' => $activity->causer?->id,
+                        'name' => $activity->causer?->name ?? 'System',
+                        'email' => $activity->causer?->email,
+                    ],
+                    'login_method' => $activity->properties['method'] ?? null,
+                    'success' => $activity->properties['success'] ?? null,
+                    'ip_address' => $activity->properties['ip_address'] ?? null,
+                    'user_agent' => $activity->properties['user_agent'] ?? null,
+                    'created_at' => $activity->created_at->format('Y-m-d H:i:s'),
+                    'created_at_human' => $activity->created_at->diffForHumans(),
+                ];
+            });
+    }
+
+    /**
+     * Get user activity logs (after login activities) with optimized query
+     */
+    public static function getUserActivityLogs($limit = 100)
+    {
+        return Activity::select([
+                'id', 'log_name', 'description', 'causer_type', 'causer_id',
+                'properties', 'event', 'created_at'
+            ])
+            ->where('log_name', 'user_activity')
+            ->with(['causer:id,name,email'])
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->map(function($activity) {
+                return [
+                    'id' => $activity->id,
+                    'type' => $activity->log_name,
+                    'description' => $activity->description,
+                    'event' => $activity->event,
+                    'user' => [
+                        'id' => $activity->causer?->id,
+                        'name' => $activity->causer?->name,
+                        'email' => $activity->causer?->email,
+                    ],
+                    'url' => $activity->properties['url'] ?? null,
+                    'method' => $activity->properties['method'] ?? null,
+                    'route' => $activity->properties['route'] ?? null,
+                    'ip_address' => $activity->properties['ip_address'] ?? null,
+                    'user_agent' => $activity->properties['user_agent'] ?? null,
+                    'response_status' => $activity->properties['response_status'] ?? null,
+                    'created_at' => $activity->created_at->format('Y-m-d H:i:s'),
+                    'created_at_human' => $activity->created_at->diffForHumans(),
+                ];
+            });
+    }
+
+    /**
+     * Get paginated activities with filters for dashboard
+     */
+    public static function getPaginatedActivities($filters = [], $perPage = 20)
+    {
+        $query = Activity::select([
+                'id', 'log_name', 'description', 'subject_type', 'subject_id',
+                'causer_type', 'causer_id', 'properties', 'batch_uuid', 'event',
+                'created_at'
+            ])
+            ->with(['causer:id,name,email']);
+
+        // Apply filters
+        if (!empty($filters['type'])) {
+            $query->where('log_name', $filters['type']);
+        }
+
+        if (!empty($filters['user_id'])) {
+            $query->where('causer_id', $filters['user_id']);
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        if (!empty($filters['search'])) {
+            $query->where(function($q) use ($filters) {
+                $q->where('description', 'LIKE', '%' . $filters['search'] . '%')
+                  ->orWhere('properties->url', 'LIKE', '%' . $filters['search'] . '%');
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')
+                    ->paginate($perPage)
+                    ->through(function($activity) {
+                        return [
+                            'id' => $activity->id,
+                            'type' => $activity->log_name,
+                            'description' => $activity->description,
+                            'event' => $activity->event,
+                            'user' => [
+                                'id' => $activity->causer?->id,
+                                'name' => $activity->causer?->name ?? 'System',
+                                'email' => $activity->causer?->email,
+                            ],
+                            'properties' => $activity->properties,
+                            'ip_address' => $activity->properties['ip_address'] ?? null,
+                            'user_agent' => $activity->properties['user_agent'] ?? null,
+                            'url' => $activity->properties['url'] ?? null,
+                            'method' => $activity->properties['method'] ?? null,
+                            'route' => $activity->properties['route'] ?? null,
+                            'created_at' => $activity->created_at->format('Y-m-d H:i:s'),
+                            'created_at_human' => $activity->created_at->diffForHumans(),
+                        ];
+                    });
+    }
+
+    /**
+     * Get activity statistics for dashboard
+     */
+    public static function getActivityStats()
+    {
+        $today = now()->startOfDay();
+        $thisWeek = now()->startOfWeek();
+        $thisMonth = now()->startOfMonth();
+
+        return [
+            'total_activities' => Activity::count(),
+            'today_activities' => Activity::where('created_at', '>=', $today)->count(),
+            'this_week_activities' => Activity::where('created_at', '>=', $thisWeek)->count(),
+            'this_month_activities' => Activity::where('created_at', '>=', $thisMonth)->count(),
+            'auth_activities' => Activity::whereIn('log_name', ['registration', 'authentication'])->count(),
+            'user_activities' => Activity::where('log_name', 'user_activity')->count(),
+            'top_users' => Activity::select('causer_id')
+                ->selectRaw('COUNT(*) as activity_count')
+                ->with(['causer:id,name,email'])
+                ->whereNotNull('causer_id')
+                ->groupBy('causer_id')
+                ->orderBy('activity_count', 'desc')
+                ->limit(5)
+                ->get()
+                ->map(function($item) {
+                    return [
+                        'user' => [
+                            'id' => $item->causer?->id,
+                            'name' => $item->causer?->name,
+                            'email' => $item->causer?->email,
+                        ],
+                        'activity_count' => $item->activity_count
+                    ];
+                }),
+        ];
+    }
+
+    /**
+     * Log activity asynchronously using Queue Job (for better performance)
+     */
+    public static function logAsync(
+        string $logName,
+        string $description,
+        array $properties = [],
+        $causer = null,
+        $subject = null
+    ) {
+        $causerId = $causer ? $causer->id : null;
+        $causerType = $causer ? get_class($causer) : null;
+        $subjectId = $subject ? $subject->id : null;
+        $subjectType = $subject ? get_class($subject) : null;
+
+        LogActivityJob::dispatch(
+            $logName,
+            $description,
+            $properties,
+            $causerId,
+            $causerType,
+            $subjectId,
+            $subjectType
+        );
+    }
+
+    /**
+     * Log authenticated activity asynchronously (recommended for high traffic)
+     */
+    public static function logAuthenticatedActivityAsync($description, $subject = null, $properties = [])
+    {
+        if (!Auth::check()) {
+            return;
+        }
+
+        $user = Auth::user();
+        $defaultProperties = [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip_address' => Request::ip(),
+            'user_agent' => Request::userAgent(),
+            'timestamp' => now()
+        ];
+
+        $allProperties = array_merge($defaultProperties, $properties);
+
+        self::logAsync('user_activity', $description, $allProperties, $user, $subject);
+    }
+}

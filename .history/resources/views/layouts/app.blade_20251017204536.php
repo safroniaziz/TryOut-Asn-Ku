@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        {{-- SEO Meta Tags - Stack untuk override per halaman --}}
+        @stack('seo-meta')
+
+        {{-- Default title jika tidak ada SEO meta --}}
+        @if(trim($__env->yieldContent('seo-meta')) === '')
+        <title>{{ config('app.name', 'TryOut ASNku') }} - {{ $title ?? 'Platform Latihan CPNS & PPPK Terbaik' }}</title>
+        @endif
+
+        {{-- Structured Data - Stack untuk schema.org --}}
+        @stack('structured-data')
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- Custom Styles -->
+        <style>
+            :root {
+                --color-primary: #1e3a8a; /* blue-800 */
+                --color-secondary: #ea580c; /* orange-600 */
+                --color-accent: #f97316; /* orange-500 */
+            }
+
+            /* Custom Animations */
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) rotate(45deg); }
+                50% { transform: translateY(-20px) rotate(45deg); }
+            }
+
+            @keyframes gradient {
+                0%, 100% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+            }
+
+            @keyframes fade-in-up {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes shimmer {
+                0% { background-position: -1000px 0; }
+                100% { background-position: 1000px 0; }
+            }
+
+            @keyframes pulse-glow {
+                0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+                50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+            }
+
+            .animate-float {
+                animation: float 3s ease-in-out infinite;
+            }
+
+            .animate-gradient {
+                background-size: 200% 200%;
+                animation: gradient 3s ease infinite;
+            }
+
+            .animate-fade-in-up {
+                animation: fade-in-up 0.8s ease-out forwards;
+            }
+
+            .animate-shimmer {
+                background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+                background-size: 1000px 100%;
+                animation: shimmer 2s infinite;
+            }
+
+            .animate-pulse-glow {
+                animation: pulse-glow 2s ease-in-out infinite;
+            }
+
+            .delay-100 { animation-delay: 0.1s; opacity: 0; }
+            .delay-200 { animation-delay: 0.2s; opacity: 0; }
+            .delay-300 { animation-delay: 0.3s; opacity: 0; }
+            .delay-400 { animation-delay: 0.4s; opacity: 0; }
+            .delay-500 { animation-delay: 0.5s; opacity: 0; }
+            .delay-1000 { animation-delay: 1s; }
+            .delay-2000 { animation-delay: 2s; }
+
+            /* Glassmorphism effect */
+            .glass {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+
+            /* Smooth scrollbar */
+            ::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+                border-radius: 10px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(180deg, #2563eb, #7c3aed);
+            }
+        </style>
+    </head>
+    <body class="font-inter antialiased bg-gradient-to-br from-blue-50 via-white to-orange-50 min-h-full">
+        <div class="min-h-screen">
+            @include('layouts.navigation')
+
+            <!-- Page Heading -->
+            @isset($header)
+                <header class="bg-white/80 backdrop-blur-sm shadow-sm border-b border-blue-100">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
+
+            <!-- Flash Messages -->
+            @if(session('success'))
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex">
+                            <i class="fas fa-check-circle text-green-400 mt-0.5"></i>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex">
+                            <i class="fas fa-exclamation-circle text-red-400 mt-0.5"></i>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if(session('info'))
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex">
+                            <i class="fas fa-info-circle text-blue-400 mt-0.5"></i>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-blue-800">{{ session('info') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Page Content -->
+            <main class="pb-8">
+                @yield('content')
+                {{ $slot ?? '' }}
+            </main>
+
+            <!-- Footer -->
+            <footer class="bg-blue-900 text-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="text-center">
+                        <h3 class="text-lg font-bold text-orange-400 mb-2">TryOut ASNku</h3>
+                        <p class="text-blue-200 text-sm">&copy; {{ date('Y') }} TryOut ASNku. Platform terbaik untuk persiapan CPNS & PPPK.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <!-- JavaScript for mobile menu & interactive elements -->
+        <script>
+            // Mobile menu toggle
+            function toggleMobileMenu() {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            }
+
+            // Close flash messages
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.flash-close')) {
+                    e.target.closest('.flash-message').remove();
+                }
+            });
+        </script>
+    </body>
+</html>

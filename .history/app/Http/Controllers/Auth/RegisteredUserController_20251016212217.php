@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Referral;
+use App\Models\PhoneVerification;
+use App\Models\Provinsi;
+use App\Models\Kota;
+use App\Models\Universitas;
+use App\Models\Instansi;
+use App\Models\Jurusan;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Illuminate\View\View;
+
+class RegisteredUserController extends Controller
+{
+    /**
+     * Display the registration view.
+     */
+    public function create(): View
+    {
+        $provinsi = Provinsi::where('aktif', true)->orderBy('nama_provinsi')->get();
+        $universitas = Universitas::where('aktif', true)
+                                 ->orderBy('nama_universitas', 'asc')
+                                 ->get();
+        $instansi = Instansi::where('aktif', true)
+                           ->orderBy('nama_instansi', 'asc')
+                           ->get();
+        $jurusan = Jurusan::where('aktif', true)
+                         ->orderBy('nama_jurusan', 'asc')
+                         ->get();
+
+        return view('auth.register', compact('provinsi', 'universitas', 'instansi', 'jurusan'));
+    }
+
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone_number' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/', 'unique:'.User::class],
+            'city' => ['required', 'string', 'max:100'],
+            'education_level' => ['required', 'in:SMA,D3,S1,S2,S3'],
+            'work_status' => ['required', 'in:mahasiswa,pengangguran,swasta,pns,freelancer,wiraswasta'],
+            'target_score' => ['nullable', 'integer', 'min:100', 'max:500'],
+            'used_referral_code' => ['nullable', 'string', 'max:20', 'exists:users,my_referral_code'],
+            'target_test' => ['nullable', 'string', 'max:50'],
+            'experience_level' => ['nullable', 'in:beginner,intermediate,experienced'],
+            'target_institution' => ['nullable', 'string', 'max:255'],
+            'motivation' => ['nullable', 'in:serve_nation,job_security,career_growth,family_dream,other'],
+        ]);
+
+        // Handle referral system
+        $parentId = null;
+        if ($request->used_referral_code) {
+            $parent = User::where('my_referral_code', $request->used_referral_code)->first();
+            if ($parent) {
+                $parentId = $parent->id;
+            }
+        }
+
+        // Verify that phone number is verified before creating user
+        if (!$request->phone_number || !\App\Models\PhoneVerification::isPhoneVerified($request->phone_number)) {
+            return back()->withErrors([
+                'phone_number' => 'Nomor WhatsApp harus diverifikasi terlebih dahulu.'
+            ])->withInput();
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone_number' => $request->phone_number,
+            'phone_verified_at' => now(), // Mark as verified since we checked above
+            'city' => $request->city,
+            'education_level' => $request->education_level,
+            'work_status' => $request->work_status,
+            'target_score' => $request->target_score,
+            // my_referral_code akan auto-generate oleh boot method
+            'parent_id' => $parentId,
+            'used_referral_code' => $request->used_referral_code,
+            'target_test' => $request->target_test,
+            'experience_level' => $request->experience_level,
+            'target_institution' => $request->target_institution,
+            'motivation' => $request->motivation,
+            'newsletter' => $request->has('newsletter'),
+        ]);
+
+        // Create referral chain if user used referral code
+        if ($parentId && $request->used_referral_code) {
+            Referral::createReferralChain($user->id, $parentId, $request->used_referral_code);
+        }
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
+    }
+}
