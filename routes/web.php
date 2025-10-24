@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('subscription')->name('subscription.')->group(function () {
         Route::get('/premium', [SubscriptionController::class, 'premium'])->name('premium');
         Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
+        Route::post('/subscribe-bulk', [SubscriptionController::class, 'subscribeBulk'])->name('subscribe-bulk');
         Route::get('/history', [SubscriptionController::class, 'history'])->name('history');
         Route::patch('/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
     });

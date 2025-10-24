@@ -22,11 +22,7 @@ class AIRecommendationService
         $motivationProfile = $this->createMotivationProfile($user);
 
         $recommendations = [
-            'ai_insights' => $this->generateAIInsights($performanceData, $learningStyle, $studyPattern),
-            // 'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern), // DISABLED
-            'smart_recommendations' => $this->generateSmartRecommendations($performanceData, $motivationProfile),
             'gamification_challenges' => $this->createGamificationChallenges($performanceData, $studyPattern),
-            'premium_insights' => $this->generatePremiumInsights($performanceData, $learningStyle),
         ];
 
         return $recommendations;

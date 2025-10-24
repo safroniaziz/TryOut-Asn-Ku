@@ -119,6 +119,11 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
+    public function userSubscriptions()
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
     public function leaderboards()
     {
         return $this->hasMany(Leaderboard::class);
@@ -126,17 +131,37 @@ class User extends Authenticatable
 
 
 
-    // Premium subscription helpers
+    // Premium subscription helpers (updated for new system)
     public function hasActivePremiumSubscription()
     {
-        return $this->subscriptions()
+        // Check both old and new systems
+        $oldSystem = $this->subscriptions()
                    ->where('status', 'active')
                    ->where('tanggal_akhir', '>=', now())
                    ->exists();
+
+        $newSystem = $this->userSubscriptions()
+                   ->where('is_active', true)
+                   ->where('expires_at', '>', now())
+                   ->exists();
+
+        return $oldSystem || $newSystem;
     }
 
     public function getActivePremiumSubscription()
     {
+        // Check new system first, fallback to old system
+        $newSubscription = $this->userSubscriptions()
+                             ->where('is_active', true)
+                             ->where('expires_at', '>', now())
+                             ->with('subscribable')
+                             ->first();
+
+        if ($newSubscription) {
+            return $newSubscription;
+        }
+
+        // Fallback to old system
         return $this->subscriptions()
                    ->where('status', 'active')
                    ->where('tanggal_akhir', '>=', now())
