@@ -4,10 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Leaderboard;
-use App\Models\JawabanUser;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class AIRecommendationService
 {
@@ -23,7 +21,7 @@ class AIRecommendationService
 
         $recommendations = [
             'ai_insights' => $this->generateAIInsights($performanceData, $learningStyle, $studyPattern),
-            // 'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern), // DISABLED
+            'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern),
             'smart_recommendations' => $this->generateSmartRecommendations($performanceData, $motivationProfile),
             'gamification_challenges' => $this->createGamificationChallenges($performanceData, $studyPattern),
             'premium_insights' => $this->generatePremiumInsights($performanceData, $learningStyle),
@@ -81,30 +79,29 @@ class AIRecommendationService
         $standardDeviation = $this->calculateStandardDeviation($scores->toArray());
         $consistency = max(0, 100 - ($standardDeviation / max($avgScore, 1) * 100));
 
-        // Category performance based on actual soal categories
-        $categoryPerformance = $this->analyzeCategoryPerformance($user, $leaderboards);
+        // Category performance
+        $categoryPerformance = $leaderboards->groupBy(function($item) {
+            return $this->categorizeTryout($item->tryout->title ?? 'Umum');
+        })->map(function($group, $category) {
+            $scores = $group->pluck('total_skor');
+            return [
+                'category' => $category,
+                'count' => $group->count(),
+                'avg_score' => round($scores->avg(), 1),
+                'best_score' => $scores->max(),
+                'trend' => $this->calculateCategoryTrend($group),
+                'confidence_level' => $this->calculateConfidenceLevel($group)
+            ];
+        })->values();
 
-        // Identify strength and weakness areas (prefer specific categories)
+        // Identify strength and weakness areas (only specific categories)
         $relevantCategories = $categoryPerformance->filter(function($category) {
             return in_array($category['category'], ['TWK', 'TIU', 'TKP']);
         });
 
-        // If no specific categories found, use all categories but exclude general ones
-        if ($relevantCategories->isEmpty()) {
-            $relevantCategories = $categoryPerformance->filter(function($category) {
-                return !in_array($category['category'], ['SKD', 'SKB', 'Umum']);
-            });
-        }
-
         $sortedCategories = $relevantCategories->sortBy('avg_score');
         $weaknessAreas = $sortedCategories->take(2)->pluck('category')->toArray();
         $strengthAreas = $sortedCategories->reverse()->take(2)->pluck('category')->toArray();
-
-        // Fallback: if still no areas found, provide default recommendations
-        if (empty($weaknessAreas) && empty($strengthAreas)) {
-            $weaknessAreas = ['TIU', 'TKP']; // Default weakness areas
-            $strengthAreas = ['TWK']; // Default strength area
-        }
 
         // Study frequency (last 30 days)
         $studyFrequency = $leaderboards
@@ -317,9 +314,9 @@ class AIRecommendationService
     }
 
     /**
-     * Create personalized study plan - DISABLED
+     * Create personalized study plan
      */
-    private function createPersonalizedStudyPlan_DISABLED(array $performance, string $learningStyle, array $studyPattern): array
+    private function createPersonalizedStudyPlan(array $performance, string $learningStyle, array $studyPattern): array
     {
         $plan = [];
 
@@ -632,83 +629,6 @@ class AIRecommendationService
         if ($coefficient < 0.1) return 'high';
         if ($coefficient < 0.2) return 'medium';
         return 'low';
-    }
-
-    private function analyzeCategoryPerformance(User $user, Collection $leaderboards): Collection
-    {
-        // Get all jawaban users for the leaderboards
-        $tryoutIds = $leaderboards->pluck('tryout_id')->unique();
-
-        $jawabanUsers = JawabanUser::where('user_id', $user->id)
-            ->whereIn('tryout_id', $tryoutIds)
-            ->with(['soal' => function($query) {
-                $query->with('category');
-            }])
-            ->get();
-
-        // Check if we have jawaban users
-        if ($jawabanUsers->isEmpty()) {
-            // No jawaban data, fallback to tryout-based analysis
-            return $this->fallbackToTryoutAnalysis($leaderboards);
-        }
-
-        // Group by category and calculate performance
-        $categoryStats = $jawabanUsers->groupBy(function($jawaban) {
-            // Check if soal and category exist
-            if (!$jawaban->soal) {
-                \Log::warning('Jawaban without soal: ' . $jawaban->id);
-                return 'NO_SOAL';
-            }
-            if (!$jawaban->soal->category) {
-                \Log::warning('Soal without category: ' . $jawaban->soal->id);
-                return 'NO_CATEGORY';
-            }
-            return $jawaban->soal->category->name;
-        })->filter(function($group, $categoryName) {
-            // Filter out invalid categories
-            $invalidCategories = ['NO_SOAL', 'NO_CATEGORY', 'NO_SOAL_RELATION', 'NO_CATEGORY_RELATION', 'Unknown'];
-            return !in_array($categoryName, $invalidCategories) && !empty($categoryName);
-        })->map(function($group, $categoryName) {
-            $totalQuestions = $group->count();
-            $correctAnswers = $group->where('is_correct', true)->count();
-            $avgScore = $totalQuestions > 0 ? ($correctAnswers / $totalQuestions) * 100 : 0;
-
-            return [
-                'category' => $categoryName,
-                'count' => $totalQuestions,
-                'avg_score' => round($avgScore, 1),
-                'best_score' => $avgScore, // For individual categories, best = avg
-                'trend' => 'stable', // Could be enhanced with time-based analysis
-                'confidence_level' => $totalQuestions >= 10 ? 'high' : ($totalQuestions >= 5 ? 'medium' : 'low')
-            ];
-        })->values();
-
-        // If no category data found, fallback to tryout-based analysis
-        if ($categoryStats->isEmpty()) {
-            return $this->fallbackToTryoutAnalysis($leaderboards);
-        }
-
-        return $categoryStats;
-    }
-
-    private function fallbackToTryoutAnalysis(Collection $leaderboards): Collection
-    {
-        return $leaderboards->groupBy(function($item) {
-            return $this->categorizeTryout($item->tryout->title ?? 'Umum');
-        })->filter(function($group, $category) {
-            // Only include valid categories
-            return in_array($category, ['TWK', 'TIU', 'TKP', 'Teknis', 'Manajerial', 'Sosio Kultural']);
-        })->map(function($group, $category) {
-            $scores = $group->pluck('total_skor');
-            return [
-                'category' => $category,
-                'count' => $group->count(),
-                'avg_score' => round($scores->avg(), 1),
-                'best_score' => $scores->max(),
-                'trend' => $this->calculateCategoryTrend($group),
-                'confidence_level' => $this->calculateConfidenceLevel($group)
-            ];
-        })->values();
     }
 
     private function categorizeTryout(string $title): string

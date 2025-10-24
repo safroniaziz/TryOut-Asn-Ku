@@ -1,6 +1,159 @@
 <!-- AI Recommendations Component - Clean & Elegant Design -->
 <div class="max-w-7xl mx-auto space-y-8">
 
+    <!-- Personalized Study Plan -->
+    @if(isset($aiRecommendations['personalized_plan']))
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300">
+            <!-- Header -->
+            <div class="px-6 py-6 border-b border-gray-100">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-book-open text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900">Rencana Belajar Personal</h3>
+                        <p class="text-gray-600 text-sm">Strategi belajar yang disesuaikan dengan performa Anda</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+                <!-- Smart Recommendation Alert -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 mb-6">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-brain text-white text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">Rekomendasi Cerdas Personal</h4>
+                            <p class="text-sm text-gray-700 mb-3">Berdasarkan analisis {{ auth()->user()->leaderboards()->count() }} tryout Anda menggunakan statistical analysis dan pattern recognition untuk memberikan rekomendasi yang personal dan relevan.</p>
+                            <div class="text-xs text-gray-600 bg-white/50 rounded-lg p-3">
+                                <strong>💡 Fakta:</strong> Sistem menganalisis rata-rata {{ auth()->user()->leaderboards()->count() > 0 ? number_format(auth()->user()->leaderboards()->avg('total_skor'), 1) : '0' }} skor Anda untuk rekomendasi yang tepat sasaran.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personalization Info Alert -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-6 h-6 bg-gray-500 rounded-md flex items-center justify-center">
+                            <i class="fas fa-user-cog text-white text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h5 class="font-medium text-gray-900 text-sm mb-1">Rekomendasi Personal untuk Anda</h5>
+                            <p class="text-gray-600 text-xs">
+                                Berdasarkan analisis <strong>{{ auth()->user()->leaderboards()->count() }} tryout</strong> Anda,
+                                sistem mendeteksi gaya belajar <strong>{{ ucfirst(str_replace('_', ' ', $aiRecommendations['personalized_plan']['learning_style'] ?? 'balanced')) }}</strong>
+                                dengan performa rata-rata <strong>{{ number_format(auth()->user()->leaderboards()->avg('total_skor') ?? 0, 1) }} poin</strong>.
+                                Setiap user mendapat rekomendasi yang berbeda!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-lg font-semibold text-gray-900 mb-6">Rekomendasi Belajar</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Weekly Hours -->
+                    <div class="bg-gray-50 rounded-xl p-5 text-center border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-clock text-white text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">{{ $aiRecommendations['personalized_plan']['schedule']['weekly_hours'] }}</div>
+                        <div class="text-sm text-gray-600 mb-2">Jam per Minggu</div>
+                        <div class="px-2 py-1 text-xs font-medium rounded-full {{
+                            $aiRecommendations['personalized_plan']['schedule']['weekly_hours'] >= 12 ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-700'
+                        }}">
+                            {{ $aiRecommendations['personalized_plan']['schedule']['weekly_hours'] >= 12 ? 'Intensif' : 'Normal' }}
+                        </div>
+                    </div>
+
+                    <!-- Daily Sessions -->
+                    <div class="bg-gray-50 rounded-xl p-5 text-center border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-calendar-day text-white text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">{{ $aiRecommendations['personalized_plan']['schedule']['daily_sessions'] }}</div>
+                        <div class="text-sm text-gray-600 mb-2">Sesi per Hari</div>
+                        <div class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                            Konsisten
+                        </div>
+                    </div>
+
+                    <!-- Peak Time -->
+                    <div class="bg-gray-50 rounded-xl p-5 text-center border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                        <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-sun text-white text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">{{ ucfirst($aiRecommendations['personalized_plan']['schedule']['optimal_time']) }}</div>
+                        <div class="text-sm text-gray-600 mb-2">Waktu Terbaik</div>
+                        <div class="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+                            Fokus Maksimal
+                        </div>
+                    </div>
+
+                    <!-- Session Length -->
+                    <div class="bg-gray-50 rounded-xl p-5 text-center border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                        <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-stopwatch text-white text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">{{ $aiRecommendations['personalized_plan']['schedule']['session_length'] }}</div>
+                        <div class="text-sm text-gray-600 mb-2">Durasi Sesi</div>
+                        <div class="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-700">
+                            Optimal
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Focus Areas -->
+                @if(isset($aiRecommendations['personalized_plan']['focus_areas']) && count($aiRecommendations['personalized_plan']['focus_areas']) > 0)
+                    <div class="mt-8">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Fokus Utama Anda</h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach($aiRecommendations['personalized_plan']['focus_areas'] as $area)
+                                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:bg-gray-100 transition-colors duration-200">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="flex items-center">
+                                            <h5 class="text-sm font-medium text-gray-900">{{ $area['area'] }}</h5>
+                                            <span class="ml-2 px-2 py-1 text-xs font-medium rounded-full
+                                                @if($area['priority'] === 'high')
+                                                    bg-red-100 text-red-700
+                                                @else
+                                                    bg-blue-100 text-blue-700
+                                                @endif
+                                                ">
+                                                    @if($area['priority'] === 'high')
+                                                        Prioritas Tinggi
+                                                    @else
+                                                        Maintain
+                                                    @endif
+                                            </span>
+                                        </div>
+                                        <span class="text-xs text-gray-500">{{ $area['time_allocation'] }}</span>
+                                    </div>
+
+                                    <!-- Activities -->
+                                    <div>
+                                        <h6 class="text-xs font-medium text-gray-600 mb-2">💡 Langkah-langkah yang disarankan:</h6>
+                                        <div class="space-y-1">
+                                            @foreach($area['activities'] as $activity)
+                                                <div class="flex items-center text-xs text-gray-600">
+                                                    <i class="fas fa-arrow-right text-blue-500 mr-2 text-xs"></i>
+                                                    {{ $activity }}
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    @endif
 
     <!-- Smart Recommendations -->
     @if(isset($aiRecommendations['smart_recommendations']) && count($aiRecommendations['smart_recommendations']) > 0)

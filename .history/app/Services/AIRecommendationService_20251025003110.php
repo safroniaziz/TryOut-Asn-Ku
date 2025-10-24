@@ -317,9 +317,9 @@ class AIRecommendationService
     }
 
     /**
-     * Create personalized study plan - DISABLED
+     * Create personalized study plan
      */
-    private function createPersonalizedStudyPlan_DISABLED(array $performance, string $learningStyle, array $studyPattern): array
+    private function createPersonalizedStudyPlan(array $performance, string $learningStyle, array $studyPattern): array
     {
         $plan = [];
 

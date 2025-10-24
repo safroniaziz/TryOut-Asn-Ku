@@ -4,10 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Leaderboard;
-use App\Models\JawabanUser;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class AIRecommendationService
 {
@@ -23,7 +21,7 @@ class AIRecommendationService
 
         $recommendations = [
             'ai_insights' => $this->generateAIInsights($performanceData, $learningStyle, $studyPattern),
-            // 'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern), // DISABLED
+            'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern),
             'smart_recommendations' => $this->generateSmartRecommendations($performanceData, $motivationProfile),
             'gamification_challenges' => $this->createGamificationChallenges($performanceData, $studyPattern),
             'premium_insights' => $this->generatePremiumInsights($performanceData, $learningStyle),
@@ -81,30 +79,25 @@ class AIRecommendationService
         $standardDeviation = $this->calculateStandardDeviation($scores->toArray());
         $consistency = max(0, 100 - ($standardDeviation / max($avgScore, 1) * 100));
 
-        // Category performance based on actual soal categories
-        $categoryPerformance = $this->analyzeCategoryPerformance($user, $leaderboards);
+        // Category performance
+        $categoryPerformance = $leaderboards->groupBy(function($item) {
+            return $this->categorizeTryout($item->tryout->title ?? 'Umum');
+        })->map(function($group, $category) {
+            $scores = $group->pluck('total_skor');
+            return [
+                'category' => $category,
+                'count' => $group->count(),
+                'avg_score' => round($scores->avg(), 1),
+                'best_score' => $scores->max(),
+                'trend' => $this->calculateCategoryTrend($group),
+                'confidence_level' => $this->calculateConfidenceLevel($group)
+            ];
+        })->values();
 
-        // Identify strength and weakness areas (prefer specific categories)
-        $relevantCategories = $categoryPerformance->filter(function($category) {
-            return in_array($category['category'], ['TWK', 'TIU', 'TKP']);
-        });
-
-        // If no specific categories found, use all categories but exclude general ones
-        if ($relevantCategories->isEmpty()) {
-            $relevantCategories = $categoryPerformance->filter(function($category) {
-                return !in_array($category['category'], ['SKD', 'SKB', 'Umum']);
-            });
-        }
-
-        $sortedCategories = $relevantCategories->sortBy('avg_score');
+        // Identify strength and weakness areas
+        $sortedCategories = $categoryPerformance->sortBy('avg_score');
         $weaknessAreas = $sortedCategories->take(2)->pluck('category')->toArray();
         $strengthAreas = $sortedCategories->reverse()->take(2)->pluck('category')->toArray();
-
-        // Fallback: if still no areas found, provide default recommendations
-        if (empty($weaknessAreas) && empty($strengthAreas)) {
-            $weaknessAreas = ['TIU', 'TKP']; // Default weakness areas
-            $strengthAreas = ['TWK']; // Default strength area
-        }
 
         // Study frequency (last 30 days)
         $studyFrequency = $leaderboards
@@ -317,9 +310,9 @@ class AIRecommendationService
     }
 
     /**
-     * Create personalized study plan - DISABLED
+     * Create personalized study plan
      */
-    private function createPersonalizedStudyPlan_DISABLED(array $performance, string $learningStyle, array $studyPattern): array
+    private function createPersonalizedStudyPlan(array $performance, string $learningStyle, array $studyPattern): array
     {
         $plan = [];
 
@@ -368,7 +361,35 @@ class AIRecommendationService
         $recommendations = [];
 
         // Performance-based recommendations
-        if ($performance['avg_score'] >= 70) {
+        if ($performance['avg_score'] < 50) {
+            $recommendations[] = [
+                'type' => 'foundation',
+                'priority' => 'urgent',
+                'title' => 'Program Fondasi Dasar',
+                'description' => 'Fokus pada konsep dasar dan pemahaman fundamental sebelum lanjut ke soal-soal latihan.',
+                'action_items' => [
+                    'Pelajari materi pembahasan setiap soal',
+                    'Fokus pada TWK, TIU, TKP fundamentals',
+                    'Lakukan analisis kesalahan setiap sesi'
+                ],
+                'estimated_time' => '2-3 minggu',
+                'success_probability' => 85
+            ];
+        } elseif ($performance['avg_score'] < 70) {
+            $recommendations[] = [
+                'type' => 'intermediate',
+                'priority' => 'high',
+                'title' => 'Program Peningkatan',
+                'description' => 'Tingkatkan akurasi dan kecepatan dengan strategi pembelajaran terstruktur.',
+                'action_items' => [
+                    'Latihan 3-4 sesi per minggu',
+                    'Fokus pada kategori yang lemah',
+                    'Review kesalahan secara rutin'
+                ],
+                'estimated_time' => '4-6 minggu',
+                'success_probability' => 90
+            ];
+        } else {
             $recommendations[] = [
                 'type' => 'advanced',
                 'priority' => 'maintain',
@@ -394,181 +415,57 @@ class AIRecommendationService
     {
         $challenges = [];
 
-        // Achievement Packages - 10 packages
-        $packages = [
-            [
-                'package_number' => 1,
-                'badge_name' => 'Pemula Berani',
-                'badge_description' => 'Langkah pertama menuju kesuksesan',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 0,
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 2,
-                'badge_name' => 'Pencari Ilmu',
-                'badge_description' => 'Semangat belajar yang tak pernah padam',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 0,
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 3,
-                'badge_name' => 'Pembelajar Gigih',
-                'badge_description' => 'Konsistensi adalah kunci keberhasilan',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 5000, // Reward setelah paket ke-3
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 4,
-                'badge_name' => 'Peneliti Cerdas',
-                'badge_description' => 'Analisis mendalam membawa hasil',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 0,
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 5,
-                'badge_name' => 'Strategi Handal',
-                'badge_description' => 'Pendekatan sistematis membuahkan hasil',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 0,
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 6,
-                'badge_name' => 'Ahli Analisis',
-                'badge_description' => 'Kemampuan analisis yang tajam',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 5000, // Reward setelah paket ke-6
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 7,
-                'badge_name' => 'Master Pemahaman',
-                'badge_description' => 'Pemahaman yang mendalam dan komprehensif',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 0,
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 8,
-                'badge_name' => 'Pakar Kompetensi',
-                'badge_description' => 'Keahlian yang diakui dan terpercaya',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 0,
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 9,
-                'badge_name' => 'Elite Performer',
-                'badge_description' => 'Performa yang konsisten dan unggul',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 0,
-                'completion_rate' => 0
-            ],
-            [
-                'package_number' => 10,
-                'badge_name' => 'Grand Master',
-                'badge_description' => 'Pencapaian tertinggi dalam pembelajaran',
-                'questions' => [
-                    'tiu' => 5,
-                    'twk' => 5,
-                    'tkp' => 5
-                ],
-                'total_questions' => 15,
-                'min_correct' => 12,
-                'max_wrong_per_category' => 1,
-                'cashback' => 5000, // Reward setelah paket ke-10
-                'completion_rate' => 0
-            ]
+        // Daily challenges - Bronze Level
+        $challenges[] = [
+            'type' => 'daily',
+            'title' => 'Tantangan Harian Bronze',
+            'description' => 'Selesaikan 1 sesi tryout dengan skor di atas rerata Anda',
+            'reward' => '50 XP + Badge "Pemula Aktif"',
+            'difficulty' => 'easy',
+            'estimated_time' => '30 menit',
+            'completion_rate' => $studyPattern['frequency'] === 'high' ? 75 : 60,
+            'cashback' => 'Rp 5.000',
+            'badge_name' => 'Bronze Daily'
         ];
 
-        // Add packages to challenges
-        foreach ($packages as $package) {
+        // Weekly challenges - Silver Level
+        $challenges[] = [
+            'type' => 'weekly',
+            'title' => 'Komitmen Mingguan Silver',
+            'description' => 'Selesaikan 5 sesi tryout dalam 7 hari',
+            'reward' => '200 XP + Badge "Konsisten"',
+            'difficulty' => 'medium',
+            'estimated_time' => '3-4 jam',
+            'completion_rate' => $studyPattern['frequency'] === 'high' ? 80 : 45,
+            'cashback' => 'Rp 25.000',
+            'badge_name' => 'Silver Weekly'
+        ];
+
+        // Performance challenges
+        if ($performance['avg_score'] < 70) {
             $challenges[] = [
-                'type' => 'achievement_package',
-                'package_number' => $package['package_number'],
-                'title' => "Paket {$package['package_number']}: {$package['badge_name']}",
-                'description' => "Selesaikan 15 soal (5 TIU + 5 TWK + 5 TKP) dengan minimal 12 benar. Maksimal 1 salah per kategori.",
-                'badge_name' => $package['badge_name'],
-                'badge_description' => $package['badge_description'],
-                'questions' => $package['questions'],
-                'total_questions' => $package['total_questions'],
-                'min_correct' => $package['min_correct'],
-                'max_wrong_per_category' => $package['max_wrong_per_category'],
-                'cashback' => $package['cashback'],
-                'estimated_time' => '45 menit'
+                'type' => 'performance',
+                'title' => 'Target Peningkatan',
+                'description' => 'Capai skor 10 poin lebih tinggi dari skor rata-rata Anda',
+                'reward' => '100 XP + Badge "Peningkatan"',
+                'difficulty' => 'medium',
+                'estimated_time' => '1 jam',
+                'completion_rate' => 65
+            ];
+        } else {
+            $challenges[] = [
+                'type' => 'performance',
+                'title' => 'Tantangan Master',
+                'description' => 'Capai skor sempurna atau di atas 90%',
+                'reward' => '300 XP + Badge "Master"',
+                'difficulty' => 'hard',
+                'estimated_time' => '1.5 jam',
+                'completion_rate' => 25
             ];
         }
 
         return $challenges;
     }
-
 
     /**
      * Generate premium insights
@@ -632,83 +529,6 @@ class AIRecommendationService
         if ($coefficient < 0.1) return 'high';
         if ($coefficient < 0.2) return 'medium';
         return 'low';
-    }
-
-    private function analyzeCategoryPerformance(User $user, Collection $leaderboards): Collection
-    {
-        // Get all jawaban users for the leaderboards
-        $tryoutIds = $leaderboards->pluck('tryout_id')->unique();
-
-        $jawabanUsers = JawabanUser::where('user_id', $user->id)
-            ->whereIn('tryout_id', $tryoutIds)
-            ->with(['soal' => function($query) {
-                $query->with('category');
-            }])
-            ->get();
-
-        // Check if we have jawaban users
-        if ($jawabanUsers->isEmpty()) {
-            // No jawaban data, fallback to tryout-based analysis
-            return $this->fallbackToTryoutAnalysis($leaderboards);
-        }
-
-        // Group by category and calculate performance
-        $categoryStats = $jawabanUsers->groupBy(function($jawaban) {
-            // Check if soal and category exist
-            if (!$jawaban->soal) {
-                \Log::warning('Jawaban without soal: ' . $jawaban->id);
-                return 'NO_SOAL';
-            }
-            if (!$jawaban->soal->category) {
-                \Log::warning('Soal without category: ' . $jawaban->soal->id);
-                return 'NO_CATEGORY';
-            }
-            return $jawaban->soal->category->name;
-        })->filter(function($group, $categoryName) {
-            // Filter out invalid categories
-            $invalidCategories = ['NO_SOAL', 'NO_CATEGORY', 'NO_SOAL_RELATION', 'NO_CATEGORY_RELATION', 'Unknown'];
-            return !in_array($categoryName, $invalidCategories) && !empty($categoryName);
-        })->map(function($group, $categoryName) {
-            $totalQuestions = $group->count();
-            $correctAnswers = $group->where('is_correct', true)->count();
-            $avgScore = $totalQuestions > 0 ? ($correctAnswers / $totalQuestions) * 100 : 0;
-
-            return [
-                'category' => $categoryName,
-                'count' => $totalQuestions,
-                'avg_score' => round($avgScore, 1),
-                'best_score' => $avgScore, // For individual categories, best = avg
-                'trend' => 'stable', // Could be enhanced with time-based analysis
-                'confidence_level' => $totalQuestions >= 10 ? 'high' : ($totalQuestions >= 5 ? 'medium' : 'low')
-            ];
-        })->values();
-
-        // If no category data found, fallback to tryout-based analysis
-        if ($categoryStats->isEmpty()) {
-            return $this->fallbackToTryoutAnalysis($leaderboards);
-        }
-
-        return $categoryStats;
-    }
-
-    private function fallbackToTryoutAnalysis(Collection $leaderboards): Collection
-    {
-        return $leaderboards->groupBy(function($item) {
-            return $this->categorizeTryout($item->tryout->title ?? 'Umum');
-        })->filter(function($group, $category) {
-            // Only include valid categories
-            return in_array($category, ['TWK', 'TIU', 'TKP', 'Teknis', 'Manajerial', 'Sosio Kultural']);
-        })->map(function($group, $category) {
-            $scores = $group->pluck('total_skor');
-            return [
-                'category' => $category,
-                'count' => $group->count(),
-                'avg_score' => round($scores->avg(), 1),
-                'best_score' => $scores->max(),
-                'trend' => $this->calculateCategoryTrend($group),
-                'confidence_level' => $this->calculateConfidenceLevel($group)
-            ];
-        })->values();
     }
 
     private function categorizeTryout(string $title): string

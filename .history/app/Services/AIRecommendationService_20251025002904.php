@@ -23,7 +23,7 @@ class AIRecommendationService
 
         $recommendations = [
             'ai_insights' => $this->generateAIInsights($performanceData, $learningStyle, $studyPattern),
-            // 'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern), // DISABLED
+            'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern),
             'smart_recommendations' => $this->generateSmartRecommendations($performanceData, $motivationProfile),
             'gamification_challenges' => $this->createGamificationChallenges($performanceData, $studyPattern),
             'premium_insights' => $this->generatePremiumInsights($performanceData, $learningStyle),
@@ -317,9 +317,9 @@ class AIRecommendationService
     }
 
     /**
-     * Create personalized study plan - DISABLED
+     * Create personalized study plan
      */
-    private function createPersonalizedStudyPlan_DISABLED(array $performance, string $learningStyle, array $studyPattern): array
+    private function createPersonalizedStudyPlan(array $performance, string $learningStyle, array $studyPattern): array
     {
         $plan = [];
 

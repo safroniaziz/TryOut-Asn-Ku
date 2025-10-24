@@ -1,189 +1,26 @@
 <!-- AI Recommendations Component - Clean & Elegant Design -->
 <div class="max-w-7xl mx-auto space-y-8">
-    <!-- AI Insights Section -->
-    <?php if(isset($aiRecommendations['ai_insights']) && count($aiRecommendations['ai_insights']) > 0): ?>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6 border-b border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center mr-4">
-                            <i class="fas fa-chart-line text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-900">Analisis Performa</h3>
-                            <p class="text-gray-600">Insight personal berdasarkan data tryout Anda</p>
-                        </div>
-                        <?php if(auth()->user()->hasActivePremiumSubscription()): ?>
-                            <div class="px-3 py-1 bg-gray-900 text-white text-xs font-semibold rounded-full">
-                                Premium
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
 
-            <!-- Insights Grid -->
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <?php $__currentLoopData = $aiRecommendations['ai_insights']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $insight): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <div class="group">
-                            <!-- Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl p-6 transition-all duration-200 hover:border-gray-300 hover:shadow-md">
-                                <!-- Icon and Title -->
-                                <div class="flex items-center mb-4">
-                                    <div class="w-10 h-10 <?php echo e($insight['type'] === 'positive' ? 'bg-green-100' :
-                                        ($insight['type'] === 'warning' ? 'bg-orange-100' :
-                                        'bg-blue-100')); ?> rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
-                                        <span class="text-2xl <?php echo e($insight['type'] === 'positive' ? 'text-green-600' :
-                                            ($insight['type'] === 'warning' ? 'text-orange-600' :
-                                            'text-blue-600')); ?>">
-                                            <?php echo e($insight['icon']); ?>
-
-                                        </span>
-                                    </div>
-                                    <h4 class="text-lg font-semibold text-gray-900 group-hover:text-gray-800 transition-colors duration-200">
-                                        <?php echo e($insight['title']); ?>
-
-                                    </h4>
-                                </div>
-
-                                <!-- Description -->
-                                <p class="text-gray-600 leading-relaxed mb-4"><?php echo e($insight['description']); ?></p>
-
-                                <!-- Status Indicator -->
-                                <div class="flex items-center text-sm font-medium">
-                                    <?php if($insight['type'] === 'positive'): ?>
-                                        <span class="flex items-center text-green-600">
-                                            <i class="fas fa-arrow-trend-up mr-2"></i>
-                                            Meningkat
-                                        </span>
-                                    <?php elseif($insight['type'] === 'warning'): ?>
-                                        <span class="flex items-center text-orange-600">
-                                            <i class="fas fa-exclamation-circle mr-2"></i>
-                                            Perlu Perhatian
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="flex items-center text-blue-600">
-                                            <i class="fas fa-info-circle mr-2"></i>
-                                            Informasi
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <!-- Personalized Study Plan -->
-    <?php if(isset($aiRecommendations['personalized_plan'])): ?>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-8 py-6 border-b border-gray-100">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-calendar-alt text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-900">Rencana Belajar Personal</h3>
-                        <p class="text-gray-600">Disesuaikan dengan gaya belajar dan performa Anda</p>
-                    </div>
-                </div>
-
-            <!-- Study Schedule Dashboard -->
-            <div class="p-8">
-                <h4 class="text-lg font-semibold text-gray-900 mb-6">Jadwal Optimal Anda</h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- Weekly Hours -->
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
-                        <div class="text-3xl font-bold text-blue-600 mb-2"><?php echo e($aiRecommendations['personalized_plan']['schedule']['weekly_hours']); ?></div>
-                        <div class="text-sm text-gray-600 font-medium">Jam per Minggu</div>
-                        <div class="text-xs text-blue-500 mt-1">
-                            <?php echo e($aiRecommendations['personalized_plan']['schedule']['weekly_hours'] >= 12 ? 'Intensif' : 'Normal'); ?>
-
-                        </div>
-                    </div>
-
-                    <!-- Daily Sessions -->
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
-                        <div class="text-3xl font-bold text-green-600 mb-2"><?php echo e($aiRecommendations['personalized_plan']['schedule']['daily_sessions']); ?></div>
-                        <div class="text-sm text-gray-600 font-medium">Sesi per Hari</div>
-                        <div class="text-xs text-green-500 mt-1">Konsisten</div>
-                    </div>
-
-                    <!-- Peak Time -->
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
-                        <div class="text-2xl font-bold text-purple-600 mb-2"><?php echo e(ucfirst($aiRecommendations['personalized_plan']['schedule']['optimal_time'])); ?></div>
-                        <div class="text-sm text-gray-600 font-medium">Waktu Terbaik</div>
-                        <div class="text-xs text-purple-500 mt-1">Fokus Maksimal</div>
-                    </div>
-
-                    <!-- Session Length -->
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
-                        <div class="text-xl font-bold text-orange-600 mb-2"><?php echo e($aiRecommendations['personalized_plan']['schedule']['session_length']); ?></div>
-                        <div class="text-sm text-gray-600 font-medium">Durasi Sesi</div>
-                        <div class="text-xs text-orange-500 mt-1">Optimal</div>
-                    </div>
-                </div>
-
-                <!-- Focus Areas -->
-                <?php if(isset($aiRecommendations['personalized_plan']['focus_areas']) && count($aiRecommendations['personalized_plan']['focus_areas']) > 0): ?>
-                    <div class="mt-8">
-                        <h4 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                            <i class="fas fa-crosshairs text-red-500 mr-3"></i>
-                            Area Fokus Prioritas
-                        </h4>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <?php $__currentLoopData = $aiRecommendations['personalized_plan']['focus_areas']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $area): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow duration-200">
-                                    <div class="flex items-start justify-between mb-4">
-                                        <div class="flex items-center">
-                                            <h5 class="text-lg font-semibold text-gray-900"><?php echo e($area['area']); ?></h5>
-                                            <span class="ml-3 px-3 py-1 text-xs font-semibold rounded-full
-                                                <?php if($area['priority'] === 'high'): ?>
-                                                    bg-red-100 text-red-700
-                                                <?php else: ?>
-                                                    bg-blue-100 text-blue-700
-                                                <?php endif; ?>
-                                                ">
-                                                    <?php if($area['priority'] === 'high'): ?>
-                                                        Prioritas Tinggi
-                                                    <?php else: ?>
-                                                        Maintain
-                                                    <?php endif; ?>
-                                            </span>
-                                        </div>
-                                        <span class="text-sm text-gray-500"><?php echo e($area['time_allocation']); ?></span>
-                                    </div>
-                                    </div>
-
-                                    <!-- Activities -->
-                                    <div>
-                                        <h6 class="text-sm font-medium text-gray-700 mb-3">Aktivitas Rekomendasi:</h6>
-                                        <div class="space-y-2">
-                                            <?php $__currentLoopData = $area['activities']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <div class="flex items-center text-sm text-gray-600">
-                                                    <i class="fas fa-check-circle text-green-500 mr-3 text-xs"></i>
-                                                    <?php echo e($activity); ?>
-
-                                                </div>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    <?php endif; ?>
 
     <!-- Smart Recommendations -->
     <?php if(isset($aiRecommendations['smart_recommendations']) && count($aiRecommendations['smart_recommendations']) > 0): ?>
+        <!-- Smart Recommendations Info Alert -->
+        <div class="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 mb-6 border border-green-200">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-lightbulb text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <h5 class="font-bold text-green-900 text-sm mb-1">💡 Rekomendasi Cerdas Berdasarkan Performa</h5>
+                    <p class="text-green-700 text-xs">
+                        Sistem menganalisis <strong>skor rata-rata <?php echo e(number_format(auth()->user()->leaderboards()->avg('total_skor') ?? 0, 1)); ?></strong> dan
+                        <strong>konsistensi performa</strong> Anda untuk memberikan rekomendasi yang tepat.
+                        Rekomendasi ini <strong>unik untuk setiap user</strong> berdasarkan data performa individual!
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="space-y-6">
             <?php $__currentLoopData = $aiRecommendations['smart_recommendations']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $recommendation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
@@ -263,63 +100,135 @@
         </div>
     <?php endif; ?>
 
-    <!-- Gamification Challenges -->
+    <!-- Study Challenges -->
     <?php if(isset($aiRecommendations['gamification_challenges']) && count($aiRecommendations['gamification_challenges']) > 0): ?>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
+        <div class="bg-white rounded-3xl border border-gray-200/50 shadow-xl overflow-hidden">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-8 py-6 border-b border-gray-100">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-gamepad text-white text-xl"></i>
+            <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-8 py-8">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-target text-white text-2xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-gray-900">Tantangan & Rewards</h3>
-                        <p class="text-gray-600">Selesaikan tantangan dan dapatkan XP serta badges</p>
+                        <h3 class="text-2xl font-bold text-white mb-2">🎯 Tantangan Belajar</h3>
+                        <p class="text-white/90 text-lg">Selesaikan tantangan dan dapatkan cashback!</p>
                     </div>
                 </div>
+            </div>
 
             <!-- Challenges Grid -->
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-8 bg-gradient-to-br from-blue-50 to-indigo-50">
+                <!-- Achievement System Info Alert -->
+                <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 mb-8 border border-purple-200">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-trophy text-white text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h5 class="font-bold text-purple-900 text-sm mb-1">🏆 Sistem Achievement Personal</h5>
+                            <p class="text-purple-700 text-xs">
+                                <strong>10 Paket Achievement</strong> yang disesuaikan dengan level Anda.
+                                Setiap paket berisi <strong>15 soal (5 TIU + 5 TWK + 5 TKP)</strong> dengan kriteria
+                                <strong>minimal 12 benar, maksimal 1 salah per kategori</strong>.
+                                Selesaikan paket 3, 6, dan 10 untuk mendapatkan <strong>cashback Rp 5.000</strong> masing-masing!
+                                <br><br>
+                                <span class="text-purple-800 font-semibold">💰 Cashback akan ditambahkan ke saldo Anda dan bisa di-claim kapanpun!</span>
+                                <br><br>
+                                <span class="text-red-600 font-bold">🔒 Syarat: Harus Upgrade Premium untuk mengerjakan tantangan dan mendapatkan achievement!</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <?php $__currentLoopData = $aiRecommendations['gamification_challenges']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $challenge): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow duration-200">
-                            <!-- Header -->
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full <?php echo e($challenge['difficulty'] === 'easy' ? 'bg-green-100 text-green-800' :
-                                    ($challenge['difficulty'] === 'medium' ? 'bg-orange-100 text-orange-800' :
-                                    'bg-red-100 text-red-800')); ?>">
-                                    <?php echo e($challenge['difficulty'] === 'easy' ? 'Mudah' : ($challenge['difficulty'] === 'medium' ? 'Sedang' : 'Sulit')); ?>
+                        <div class="group relative">
+                            <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+                                <!-- Header -->
+                                    <div class="flex items-center justify-between mb-6">
+                                    <span class="px-4 py-2 text-sm font-bold rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+                                        Paket <?php echo e($challenge['package_number'] ?? 1); ?>
 
-                                </span>
-                                <span class="text-xs text-gray-500"><?php echo e($challenge['type']); ?></span>
-                            </div>
+                                    </span>
+                                    <div class="flex items-center text-lg font-bold text-green-600">
+                                        <i class="fas fa-coins mr-2"></i>
+                                        <?php if(($challenge['cashback'] ?? 0) > 0): ?>
+                                            Rp <?php echo e(number_format($challenge['cashback'], 0, ',', '.')); ?>
 
-                            <h5 class="text-lg font-semibold text-gray-900 mb-3"><?php echo e($challenge['title']); ?></h5>
-                            <p class="text-gray-600 text-base mb-4"><?php echo e($challenge['description']); ?></p>
-
-                            <!-- Progress Bar -->
-                            <div class="mb-4">
-                                <div class="flex items-center justify-between text-sm text-gray-500 mb-2">
-                                    <span>Progress</span>
-                                    <span><?php echo e($challenge['completion_rate']); ?>%</span>
+                                        <?php else: ?>
+                                            Badge Only
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="h-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full transition-all duration-500"
-                                         style="width: <?php echo e($challenge['completion_rate']); ?>%"></div>
+
+                                <?php if(($challenge['cashback'] ?? 0) > 0): ?>
+                                <!-- Cashback Info -->
+                                <div class="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                                    <div class="flex items-center text-sm text-green-700">
+                                        <i class="fas fa-wallet mr-2 text-green-600"></i>
+                                        <span class="font-medium">Cashback akan ditambahkan ke saldo Anda dan bisa di-claim kapanpun!</span>
+                                    </div>
                                 </div>
-                            </div>
+                                <?php endif; ?>
 
-                            <!-- Footer -->
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    <?php echo e($challenge['estimated_time']); ?>
+                                <h5 class="text-xl font-bold text-gray-900 mb-4"><?php echo e($challenge['title']); ?></h5>
+                                <p class="text-gray-600 text-base mb-6 leading-relaxed"><?php echo e($challenge['description']); ?></p>
 
+                                <!-- Status -->
+                                <div class="mb-6">
+                                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-clock text-blue-500 mr-2"></i>
+                                                <span class="font-bold text-blue-800">Belum Dikerjakan</span>
+                                            </div>
+                                            <div class="flex items-center text-blue-600">
+                                                <i class="fas fa-play mr-1"></i>
+                                                Mulai Sekarang
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex items-center text-sm font-semibold text-purple-600">
-                                    <i class="fas fa-gift mr-2"></i>
-                                    <?php echo e($challenge['reward']); ?>
 
+                                <!-- Badge & Requirements Info -->
+                                <div class="mb-6">
+                                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-200">
+                                        <div class="flex items-center mb-3">
+                                            <i class="fas fa-medal mr-2 text-yellow-500"></i>
+                                            <span class="font-bold text-yellow-800"><?php echo e($challenge['badge_name'] ?? 'Achievement Badge'); ?></span>
+                                        </div>
+                                        <p class="text-sm text-yellow-700 mb-3"><?php echo e($challenge['badge_description'] ?? 'Deskripsi badge'); ?></p>
+
+                                        <!-- Requirements -->
+                                        <div class="grid grid-cols-3 gap-2 text-xs">
+                                            <div class="text-center bg-white rounded-lg p-2">
+                                                <div class="font-bold text-blue-600"><?php echo e($challenge['questions']['tiu'] ?? 5); ?></div>
+                                                <div class="text-gray-600">TIU</div>
+                                            </div>
+                                            <div class="text-center bg-white rounded-lg p-2">
+                                                <div class="font-bold text-green-600"><?php echo e($challenge['questions']['twk'] ?? 5); ?></div>
+                                                <div class="text-gray-600">TWK</div>
+                                            </div>
+                                            <div class="text-center bg-white rounded-lg p-2">
+                                                <div class="font-bold text-purple-600"><?php echo e($challenge['questions']['tkp'] ?? 5); ?></div>
+                                                <div class="text-gray-600">TKP</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 text-center">
+                                            <span class="text-xs font-medium text-gray-600">
+                                                Minimal <?php echo e($challenge['min_correct'] ?? 12); ?>/<?php echo e($challenge['total_questions'] ?? 15); ?> benar
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Button -->
+                                <div class="mt-auto">
+                                    <button class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                        <i class="fas fa-play mr-3"></i>
+                                        Mulai Sekarang
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -329,55 +238,5 @@
         </div>
     <?php endif; ?>
 
-    <!-- Premium Insights -->
-    <?php if(isset($aiRecommendations['premium_insights']) && count($aiRecommendations['premium_insights']) > 0 && !auth()->user()->hasActivePremiumSubscription()): ?>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 px-8 py-6 border-b border-gray-100">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-crown text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-900">Premium Insights</h3>
-                        <p class="text-gray-600">Analisis AI lanjutan hanya untuk member Premium</p>
-                    </div>
-                </div>
-
-            <!-- Premium Features -->
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <?php $__currentLoopData = $aiRecommendations['premium_insights']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $insight): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow duration-200">
-                            <div class="flex items-center mb-4">
-                                <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center mr-3">
-                                    <i class="fas fa-brain text-white text-lg"></i>
-                                </div>
-                                <h5 class="text-lg font-semibold text-gray-900"><?php echo e($insight['title']); ?></h5>
-                            </div>
-                            <p class="text-gray-600 text-base mb-4"><?php echo e($insight['description']); ?></p>
-                            <button class="w-full px-4 py-3 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition-colors duration-200">
-                                <i class="fas fa-lock mr-2"></i>
-                                <?php echo e($insight['action_text']); ?>
-
-                            </button>
-                        </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </div>
-
-                <!-- Upgrade CTA -->
-                <div class="px-8 py-6 text-center bg-gray-50 border-t border-gray-100">
-                    <button class="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold rounded-xl hover:from-yellow-500 hover:to-orange-600 transition-all duration-200">
-                        <i class="fas fa-rocket mr-3"></i>
-                        Upgrade ke Premium untuk Mengakses Semua Fitur AI
-                    </button>
-                    <p class="text-xs text-gray-500 mt-3">
-                        <i class="fas fa-shield-alt mr-1"></i>
-                        Garansi 7 hari • Batal kapan saja
-                    </p>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
 </div>
 <?php /**PATH /var/www/html/resources/views/components/ai-recommendations.blade.php ENDPATH**/ ?>

@@ -23,7 +23,7 @@ class AIRecommendationService
 
         $recommendations = [
             'ai_insights' => $this->generateAIInsights($performanceData, $learningStyle, $studyPattern),
-            // 'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern), // DISABLED
+            'personalized_plan' => $this->createPersonalizedStudyPlan($performanceData, $learningStyle, $studyPattern),
             'smart_recommendations' => $this->generateSmartRecommendations($performanceData, $motivationProfile),
             'gamification_challenges' => $this->createGamificationChallenges($performanceData, $studyPattern),
             'premium_insights' => $this->generatePremiumInsights($performanceData, $learningStyle),
@@ -317,9 +317,9 @@ class AIRecommendationService
     }
 
     /**
-     * Create personalized study plan - DISABLED
+     * Create personalized study plan
      */
-    private function createPersonalizedStudyPlan_DISABLED(array $performance, string $learningStyle, array $studyPattern): array
+    private function createPersonalizedStudyPlan(array $performance, string $learningStyle, array $studyPattern): array
     {
         $plan = [];
 
@@ -646,10 +646,21 @@ class AIRecommendationService
             }])
             ->get();
 
-        // Check if we have jawaban users
+        // Debug: Check if we have jawaban users and their categories
         if ($jawabanUsers->isEmpty()) {
-            // No jawaban data, fallback to tryout-based analysis
-            return $this->fallbackToTryoutAnalysis($leaderboards);
+            \Log::info('No jawaban users found for user: ' . $user->id);
+        } else {
+            \Log::info('Found ' . $jawabanUsers->count() . ' jawaban users');
+            $categoriesFound = $jawabanUsers->map(function($jawaban) {
+                if (!$jawaban->soal) {
+                    return 'NO_SOAL_RELATION';
+                }
+                if (!$jawaban->soal->category) {
+                    return 'NO_CATEGORY_RELATION';
+                }
+                return $jawaban->soal->category->name;
+            })->unique()->values();
+            \Log::info('Categories found: ' . $categoriesFound->implode(', '));
         }
 
         // Group by category and calculate performance
@@ -685,30 +696,25 @@ class AIRecommendationService
 
         // If no category data found, fallback to tryout-based analysis
         if ($categoryStats->isEmpty()) {
-            return $this->fallbackToTryoutAnalysis($leaderboards);
+            return $leaderboards->groupBy(function($item) {
+                return $this->categorizeTryout($item->tryout->title ?? 'Umum');
+            })->filter(function($group, $category) {
+                // Only include valid categories
+                return in_array($category, ['TWK', 'TIU', 'TKP', 'Teknis', 'Manajerial', 'Sosio Kultural']);
+            })->map(function($group, $category) {
+                $scores = $group->pluck('total_skor');
+                return [
+                    'category' => $category,
+                    'count' => $group->count(),
+                    'avg_score' => round($scores->avg(), 1),
+                    'best_score' => $scores->max(),
+                    'trend' => $this->calculateCategoryTrend($group),
+                    'confidence_level' => $this->calculateConfidenceLevel($group)
+                ];
+            })->values();
         }
 
         return $categoryStats;
-    }
-
-    private function fallbackToTryoutAnalysis(Collection $leaderboards): Collection
-    {
-        return $leaderboards->groupBy(function($item) {
-            return $this->categorizeTryout($item->tryout->title ?? 'Umum');
-        })->filter(function($group, $category) {
-            // Only include valid categories
-            return in_array($category, ['TWK', 'TIU', 'TKP', 'Teknis', 'Manajerial', 'Sosio Kultural']);
-        })->map(function($group, $category) {
-            $scores = $group->pluck('total_skor');
-            return [
-                'category' => $category,
-                'count' => $group->count(),
-                'avg_score' => round($scores->avg(), 1),
-                'best_score' => $scores->max(),
-                'trend' => $this->calculateCategoryTrend($group),
-                'confidence_level' => $this->calculateConfidenceLevel($group)
-            ];
-        })->values();
     }
 
     private function categorizeTryout(string $title): string
